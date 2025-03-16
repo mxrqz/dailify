@@ -10,6 +10,7 @@ import { useAuth, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 import { EmailLinkFactor } from '@clerk/types';
 import { ClerkAPIError, OAuthStrategy } from '@clerk/types';
 import VerifyingLink from "./verifying-link";
+import { isClerkAPIResponseError } from '@clerk/clerk-react/errors'
 
 export default function Login() {
     const { signOut } = useAuth()
@@ -102,7 +103,6 @@ export default function Login() {
         const redirectUrl = `${url}/sign-in/verify`;
 
         try {
-            // 1️⃣ Tentando logar com Magic Link
             const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
 
             const emailLinkFactor = supportedFirstFactors?.find(
@@ -125,25 +125,24 @@ export default function Login() {
                 console.log("The email link has expired.");
             }
 
-        } catch (err: any) {
-            // 2️⃣ Se der erro porque o usuário não existe, crie uma conta nova
-            if (err.errors?.[0]?.code === "resource_not_found") {
-                console.log("User not found, creating account...");
+        } catch (err) {
+            if (isClerkAPIResponseError(err)) {
+                if (err.errors[0].code === "form_identifier_not_found") {
+                    await signUp.create({
+                        emailAddress,
+                    })
 
-                await signUp.create({
-                    emailAddress,
-                })
-
-                const signUpAttempt = await startEmailLinkFlow({
-                    redirectUrl,
-                })
-                const verification = signUpAttempt.verifications.emailAddress
-                if (verification.verifiedFromTheSameClient()) {
-                    setVerifying(false)
-                    // setVerified(true)
+                    const signUpAttempt = await startEmailLinkFlow({
+                        redirectUrl,
+                    })
+                    const verification = signUpAttempt.verifications.emailAddress
+                    if (verification.verifiedFromTheSameClient()) {
+                        setVerifying(false)
+                        // setVerified(true)
+                    }
+                } else {
+                    console.error("Unexpected error:", err);
                 }
-            } else {
-                console.error("Unexpected error:", err);
             }
         } finally {
             setVerifying(false);
