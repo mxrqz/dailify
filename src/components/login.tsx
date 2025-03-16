@@ -6,7 +6,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
-import { useAuth, useSignIn, useUser } from "@clerk/clerk-react";
+import { useAuth, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 import { EmailLinkFactor } from '@clerk/types';
 import { ClerkAPIError, OAuthStrategy } from '@clerk/types';
 import VerifyingLink from "./verifying-link";
@@ -14,6 +14,7 @@ import VerifyingLink from "./verifying-link";
 export default function Login() {
     const { signOut } = useAuth()
     const { signIn, isLoaded } = useSignIn()
+    const { signUp } = useSignUp()
     const { isSignedIn } = useUser()
 
     const [verifying, setVerifying] = useState(false)
@@ -45,71 +46,63 @@ export default function Login() {
     }
 
     // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault()
-    //     if (!signIn) return
+    //     e.preventDefault();
+    //     if (!signIn || !isLoaded) return;
 
-    //     setVerified(false)
+    //     setVerifying(true);
 
     //     const formData = new FormData(e.currentTarget);
-    //     const emailAddress = formData.get("email") as string
-
-    //     const { startEmailLinkFlow } = signIn.createEmailLinkFlow()
+    //     const emailAddress = formData.get("email") as string;
+    //     setEmail(emailAddress);
 
     //     try {
-    //         const { supportedFirstFactors } = await signIn.create({
-    //             identifier: emailAddress,
-    //         })
+    //         const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
 
-    //         setVerifying(true)
-    //         setEmail(emailAddress)
-
-    //         const isEmailLinkFactor = (factor: SignInFirstFactor): factor is EmailLinkFactor => {
-    //             return factor.strategy === 'email_link'
-    //         }
-    //         const emailLinkFactor = supportedFirstFactors?.find(isEmailLinkFactor)
+    //         const emailLinkFactor = supportedFirstFactors?.find(
+    //             (factor): factor is EmailLinkFactor => factor.strategy === "email_link"
+    //         );
 
     //         if (!emailLinkFactor) {
-    //             console.log('Email link factor not found')
-    //             return
+    //             console.log("Email link factor not found");
+    //             return;
     //         }
 
-    //         const { emailAddressId } = emailLinkFactor
+    //         // futuramente mudar para uma url fixa, no caso um dominio fixo
+    //         const url = "https://dailify.mxrqz.com" // window.location.origin
+    //         const redirectUrl = `${url}/sign-in/verify`;
+    //         const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
+    //             emailAddressId: emailLinkFactor.emailAddressId,
+    //             redirectUrl,
+    //         });
 
-    //         const protocol = window.location.protocol
-    //         const host = window.location.host
-
-    //         const signInAttempt = await startEmailLinkFlow({
-    //             emailAddressId,
-    //             redirectUrl: `${protocol}//${host}/sign-in/verify`,
-    //         })
-
-    //         const verification = signInAttempt.firstFactorVerification
-
-    //         if (verification.status === 'expired') {
-    //             console.log('The email link has expired.')
-    //         }
-
-    //         if (verification.status === 'verified') {
-    //             setVerifying(false)
-    //             setVerified(true)
+    //         if (signInAttempt.firstFactorVerification.status === "verified") {
+    //             window.location.href = "/"
+    //         } else if (signInAttempt.firstFactorVerification.status === "expired") {
+    //             console.log("The email link has expired.");
     //         }
     //     } catch (err: any) {
-    //         console.error(JSON.stringify(err, null, 2))
-    //         console.log('An error occurred.')
+    //         console.error("Error:", err);
+    //     } finally {
+    //         setVerifying(false);
     //     }
-    // }
+    // };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!signIn || !isLoaded) return;
+        if (!isLoaded || !signUp) return;
 
         setVerifying(true);
 
         const formData = new FormData(e.currentTarget);
         const emailAddress = formData.get("email") as string;
         setEmail(emailAddress);
+        const { startEmailLinkFlow } = signUp.createEmailLinkFlow()
+
+        const url = "https://dailify.mxrqz.com";
+        const redirectUrl = `${url}/sign-in/verify`;
 
         try {
+            // 1️⃣ Tentando logar com Magic Link
             const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
 
             const emailLinkFactor = supportedFirstFactors?.find(
@@ -121,25 +114,42 @@ export default function Login() {
                 return;
             }
 
-            // futuramente mudar para uma url fixa, no caso um dominio fixo
-            const url = "https://dailify.mxrqz.com" // window.location.origin
-            const redirectUrl = `${url}/sign-in/verify`;
             const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
                 emailAddressId: emailLinkFactor.emailAddressId,
                 redirectUrl,
             });
 
             if (signInAttempt.firstFactorVerification.status === "verified") {
-                window.location.href = "/"
+                window.location.href = "/";
             } else if (signInAttempt.firstFactorVerification.status === "expired") {
                 console.log("The email link has expired.");
             }
+
         } catch (err: any) {
-            console.error("Error:", err);
+            // 2️⃣ Se der erro porque o usuário não existe, crie uma conta nova
+            if (err.errors?.[0]?.code === "resource_not_found") {
+                console.log("User not found, creating account...");
+
+                await signUp.create({
+                    emailAddress,
+                })
+
+                const signUpAttempt = await startEmailLinkFlow({
+                    redirectUrl,
+                })
+                const verification = signUpAttempt.verifications.emailAddress
+                if (verification.verifiedFromTheSameClient()) {
+                    setVerifying(false)
+                    // setVerified(true)
+                }
+            } else {
+                console.error("Unexpected error:", err);
+            }
         } finally {
             setVerifying(false);
         }
     };
+
 
     if (!isLoaded) {
         return (
