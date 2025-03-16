@@ -119,12 +119,6 @@ export default function NewTask({ onNewTask }: NewTaskProps) {
                         <PlusIcon />
                     </Button>
                 </DialogClose>
-
-                {/* {isLoading && (
-                    <div className="w-full h-full grid place-items-center absolute bg-foreground/30 top-0 left-0">
-                        <Loader2Icon className="text-background size-12 animate-spin" />
-                    </div>
-                )} */}
             </DialogContent>
         </Dialog>
     )
