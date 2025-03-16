@@ -122,7 +122,8 @@ export default function Login() {
             }
 
             // futuramente mudar para uma url fixa, no caso um dominio fixo
-            const redirectUrl = `${window.location.origin}/sign-in/verify`;
+            const url = "dailify.mxrqz.com" // window.location.origin
+            const redirectUrl = `${url}/sign-in/verify`;
             const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
                 emailAddressId: emailLinkFactor.emailAddressId,
                 redirectUrl,
