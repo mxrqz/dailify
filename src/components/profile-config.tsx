@@ -80,7 +80,7 @@ export default function ProfileConfig() {
                 <span>Profile</span>
             </DialogTrigger>
 
-            {/* <DialogContent className="max-h-[calc(100%-2rem)] overflow-y-scroll">
+            <DialogContent className="max-h-[calc(100%-2rem)] overflow-y-scroll">
                 <DialogHeader className="">
                     <DialogTitle>User Profile</DialogTitle>
                     <DialogDescription>Update your profile information. Click save when you're done.</DialogDescription>
@@ -178,7 +178,7 @@ export default function ProfileConfig() {
                     </DialogFooter>
                 </form>
 
-            </DialogContent> */}
+            </DialogContent>
         </Dialog>
     )
 }

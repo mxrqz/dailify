@@ -1,7 +1,7 @@
 import { TaskProps } from "@/types/types";
 import { initializeApp } from "firebase/app";
 import { arrayUnion, collection, doc, getDoc, getDocs, getFirestore, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
-import { format, startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 import { weekDays } from "@/conts/conts";
 
 const firebaseConfig = {
