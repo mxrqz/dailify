@@ -3,16 +3,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 import { useEffect, useState } from "react";
 
-export default function TimePicker({ onSelectedTime }: TimePickerProps) {
+export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerProps) {
     const [hour, setHour] = useState<string>("09")
     const [minute, setMinute] = useState<string>("00")
     const [time, setTime] = useState<string>("am")
 
     useEffect(() => {
-        if (!hour || !minute || !time) return
-        const fullTime = `${time === "am" ? hour : Number(hour) + 12}:${minute}`
-
-        onSelectedTime(fullTime)
+        if (!hour || !minute || !time || !selectedDate) return
+        const hourNumber = time === "am" ? Number(hour) : Number(hour) + 12
+        const minuteNumber = Number(minute)
+        const addTime = selectedDate.setHours(hourNumber, minuteNumber, 0)
+        const finalDate = new Date(addTime)
+        onSelectedTime(finalDate)
     }, [hour, minute, time])
 
     return (
@@ -23,11 +25,14 @@ export default function TimePicker({ onSelectedTime }: TimePickerProps) {
                 </SelectTrigger>
 
                 <SelectContent position="item-aligned">
-                    {Array.from({ length: 12 }, (_, i) => (
-                        <SelectItem key={i} value={i.toString().padStart(2, "0")}>
-                            {i.toString().padStart(2, "0")}
-                        </SelectItem>
-                    ))}
+                    {Array.from({ length: 12 }, (_, i) => {
+                        const index = time === "am" ? i : i + 1
+                        return (
+                            <SelectItem key={index} value={index.toString().padStart(2, "0")}>
+                                {index.toString().padStart(2, "0")}
+                            </SelectItem>
+                        )
+                    })}
                 </SelectContent>
             </Select>
 

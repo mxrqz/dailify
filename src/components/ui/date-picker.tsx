@@ -14,13 +14,24 @@ import {
 } from "@/components/ui/popover"
 import { DatePickerProps } from "@/types/types"
 
-export function DatePicker({ onSelectedDate, id }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>()
+export function DatePicker({ onSelectedDate, id, currentSelectedDate }: DatePickerProps) {
+  const [date, setDate] = React.useState<Date>(currentSelectedDate)
+
+  const handleDateChange = (selectedDate: Date | undefined) => {
+    const hour = currentSelectedDate?.getHours()
+    const minutes = currentSelectedDate?.getMinutes()
+
+    if (!hour || minutes === null) return
+
+    const newDate = selectedDate?.setHours(hour, minutes)
+    if (!newDate) return
+    setDate(new Date(newDate))
+    onSelectedDate(new Date(newDate))
+  }
 
   React.useEffect(() => {
-    if (!date) return
-    onSelectedDate(date)
-  }, [date])
+    setDate(currentSelectedDate)
+  }, [currentSelectedDate])
 
   return (
     <Popover>
@@ -41,7 +52,7 @@ export function DatePicker({ onSelectedDate, id }: DatePickerProps) {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={handleDateChange}
           initialFocus
         />
       </PopoverContent>

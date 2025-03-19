@@ -4,7 +4,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TimePicker from "./ui/time-picket";
 import DurationPicker from "./ui/duration-picker";
 import PriorityPicker from "./ui/priority-picker";
@@ -14,34 +14,30 @@ import { Button } from "./ui/button";
 
 import { v4 as uuidv4 } from 'uuid';
 import { NewTaskProps, TaskProps } from "@/types/types";
-import { format } from "date-fns";
 import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
 
-export default function NewTask({ onNewTask }: NewTaskProps) {
+export default function NewTask({ onNewTask, currentSelectedDate }: NewTaskProps) {
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
-    const [selectedDate, setSelectedDate] = useState<Date>()
-    const [selectedTime, setSelectedTime] = useState<string>()
+    const [selectedDate, setSelectedDate] = useState<Date>(currentSelectedDate)
+    // const [fullDate, setFullDate] = useState<Date | undefined>()
     const [selectedDuration, setSelectedDuration] = useState<string>()
     const [priority, setPriority] = useState<number>(0)
     const [tags, setTags] = useState<string[]>()
-    const [repeat, setRepeat] = useState<string>()
+    const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
     const { user } = useUser()
 
     const addNewTask = async () => {
-        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedTime || !selectedDuration || priority === null || !repeat) return
+        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
 
         const userId = user.id
         const title = titleRef.current.value
         const desc = descriptionRef.current.value
-        const time = selectedTime
         const id = uuidv4()
-        const formattedDate = format(selectedDate, "PPP")
 
         const taskData: TaskProps = {
-            time,
-            date: formattedDate,
+            date: selectedDate,
             id: id,
             title,
             description: desc,
@@ -55,6 +51,10 @@ export default function NewTask({ onNewTask }: NewTaskProps) {
         await saveTask(userId, taskData)
         onNewTask(taskData)
     }
+
+    useEffect(() => {
+        setSelectedDate(currentSelectedDate)
+    }, [currentSelectedDate])
 
     return (
         <Dialog>
@@ -82,12 +82,15 @@ export default function NewTask({ onNewTask }: NewTaskProps) {
                     <div className="w-full flex items-center gap-3">
                         <div className="flex flex-col gap-1 w-full">
                             <Label htmlFor="date">Date</Label>
-                            <DatePicker id="date" onSelectedDate={setSelectedDate} />
+                            <DatePicker id="date" onSelectedDate={setSelectedDate} currentSelectedDate={selectedDate} />
                         </div>
 
                         <div className="flex flex-col gap-1 w-full">
                             <Label htmlFor="time">Time</Label>
-                            <TimePicker onSelectedTime={setSelectedTime} />
+                            <TimePicker
+                                onSelectedTime={setSelectedDate}
+                                selectedDate={selectedDate}
+                            />
                         </div>
                     </div>
 

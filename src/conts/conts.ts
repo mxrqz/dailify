@@ -5,3 +5,5 @@ export const priorityBgColor = ["bg-gray-500/10", "bg-green-500/10", "bg-yellow-
 export const prioritySelectedBgColor = ["data-[state=on]:bg-gray-500/70", "data-[state=on]:bg-green-500/70", "data-[state=on]:bg-yellow-500/70", "data-[state=on]:bg-orange-500/70", "data-[state=on]:bg-red-500/70"]
 export const tagsBgColors2 = ["bg-[#eae4e9ff]", "bg-[#fff1e6ff]", "bg-[#fde2e4ff]", "bg-[#fad2e1ff]", "bg-[#e2ece9ff]", "bg-[#bee1e6ff]", "bg-[#f0efebff]", "bg-[#dfe7fdff]", "bg-[#cddafdff]"]
 export const tagsBorderColors2 = ["border-[#eae4e9ff]", "border-[#fff1e6ff]", "border-[#fde2e4ff]", "border-[#fad2e1ff]", "border-[#e2ece9ff]", "border-[#bee1e6ff]", "border-[#f0efebff]", "border-[#dfe7fdff]", "border-[#cddafdff]"]
+
+export const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]

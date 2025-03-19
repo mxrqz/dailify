@@ -135,10 +135,13 @@ export default function Login() {
                     const signUpAttempt = await startEmailLinkFlow({
                         redirectUrl,
                     })
+
                     const verification = signUpAttempt.verifications.emailAddress
-                    if (verification.verifiedFromTheSameClient()) {
-                        setVerifying(false)
-                        // setVerified(true)
+
+                    console.log(verification.status)
+
+                    if (verification.status === 'verified') {
+                        window.location.href = "/";
                     }
                 } else {
                     console.error("Unexpected error:", err);

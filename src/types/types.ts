@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface TaskProps {
     id: string;
     title: string;
@@ -5,9 +7,8 @@ export interface TaskProps {
     completed: boolean;
     duration: string,
     priority: number,
-    repeat: string,
-    date: string,
-    time: string
+    repeat: string | { Weekly: string[] | undefined },
+    date: Date | Timestamp,
     tags?: string[],
 }
 
@@ -21,11 +22,13 @@ export interface SelectDayProps {
 
 export interface DatePickerProps {
     onSelectedDate: (selectedDate: Date) => void;
-    id: string
+    id: string;
+    currentSelectedDate: Date;
 }
 
 export interface TimePickerProps {
-    onSelectedTime: (selectedTime: string) => void;
+    onSelectedTime: (selectedTime: Date) => void;
+    selectedDate: Date
 }
 
 export interface DurationPickerProps {
@@ -41,9 +44,16 @@ export interface TagsPickerProps {
 }
 
 export interface RepeatPickerProps {
-    onSelectedRepeat: (selectedRepeat: string) => void;
+    onSelectedRepeat: (selectedRepeat: string | { Weekly: string[] | undefined }) => void;
 }
 
 export interface NewTaskProps {
     onNewTask: (newTask: TaskProps) => void;
+    currentSelectedDate: Date,
 }
+
+export interface FormDataValues {
+    firstName: string;
+    lastName: string;
+    username: string;
+};
