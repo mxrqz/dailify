@@ -3,8 +3,11 @@ import { Button } from "./ui/button";
 import { useCallback, useState } from "react";
 import { format } from 'date-fns';
 import { enUS, ptBR } from "date-fns/locale";
+import { useDailify } from "./dailifyContext";
 
-export default function SelectDay({ onSelectedDay }: { onSelectedDay: (selectedDate: Date) => void }) {
+export default function SelectDay() {
+    const { setSelectedDay, setIsCalendar, isCalendar } = useDailify()
+
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const language = navigator.language.startsWith("pt") ? ptBR : enUS;
     const formattedDate = format(selectedDate, "P", { locale: language });
@@ -14,12 +17,11 @@ export default function SelectDay({ onSelectedDay }: { onSelectedDay: (selectedD
             setSelectedDate((prevDate) => {
                 const newDate = days === 0 ? new Date() : new Date(prevDate);
                 if (days !== 0) newDate.setDate(newDate.getDate() + days);
-
-                onSelectedDay(newDate);
+                setSelectedDay(newDate)
                 return newDate;
             });
         },
-        [onSelectedDay]
+        []
     );
 
     return (
@@ -38,13 +40,9 @@ export default function SelectDay({ onSelectedDay }: { onSelectedDay: (selectedD
                 </Button>
             </div>
 
-            <Button variant={"outline"} size={"icon"}>
+            <Button variant={"outline"} size={"icon"} id="calendar" onClick={() => setIsCalendar(!isCalendar)}>
                 <Calendar1Icon />
             </Button>
-
-            {/* <div>
-                <span>{formattedDate}</span>
-            </div> */}
         </section>
     )
 }

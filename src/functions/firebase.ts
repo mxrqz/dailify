@@ -1,7 +1,7 @@
 import { TaskProps } from "@/types/types";
 import { initializeApp } from "firebase/app";
 import { arrayUnion, collection, doc, getDoc, getDocs, getFirestore, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
-import { startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth, eachDayOfInterval, format } from "date-fns";
 import { weekDays } from "@/conts/conts";
 
 const firebaseConfig = {
@@ -73,7 +73,6 @@ export async function getTasksForDay(userId: string, selectedDate: Date) {
 }
 
 export async function getDayTasks(date: Date, userId: string) {
-    // const formattedDate = format(date, "PPP")
     const start = startOfDay(date);
     const end = endOfDay(date);
 
@@ -126,7 +125,7 @@ export async function getTaskByIds(userId: string, taskId: string[], selectedDat
             if (repeatDays?.includes(selectedDay)) {
                 tasks.push(data)
             }
-        } else if (typeof data.repeat === "string" && data.repeat === "Monthly"){
+        } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
             const selecteDay = selectedDate.getDate()
             const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
             if (selecteDay === taskDate) {
@@ -135,6 +134,132 @@ export async function getTaskByIds(userId: string, taskId: string[], selectedDat
         }
         // if (data.date === format(selectedDate, "PPP")) {
         //     tasks.push(data)
+        // }
+    });
+
+    return tasks;
+}
+
+
+
+export async function getTasksForMonth(userId: string, month: Date) {
+    const tasks = await getMonthTasks(userId, month)
+    const repeatTasks = await getMonthlyRepeatTasks(userId, month)
+
+    if (repeatTasks) {
+        // const unidedTasks = Array.from(
+        //     new Map(
+        //         [...tasks, ...repeatTasks]
+        //             .filter((task): task is TaskProps => task !== null && task !== undefined && task.id !== null && task.id !== undefined)
+        //             .map(task => [task.id!, task])
+        //     ).values()
+        // );
+
+        const uniqueTasks = Array.from(
+            new Map(
+                [...tasks, ...repeatTasks]
+                    .filter((task): task is TaskProps =>
+                        task !== null && task !== undefined && task.id !== null && task.id !== undefined && task.date !== undefined
+                    )
+                    .map(task => [`${task.id}-${task.date}`, task]) // Usa id + date como chave
+            ).values()
+        );
+
+        return uniqueTasks
+    }
+
+    return tasks
+}
+
+async function getMonthTasks(userId: string, month: Date) {
+    const start = startOfMonth(month);
+    const end = endOfMonth(month);
+
+    const q = query(collection(db, "users", userId, "tasks"),
+        where("date", ">=", start),
+        where("date", "<=", end)
+    );
+
+    let tasks: TaskProps[] = []
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+        tasks.push(doc.data() as TaskProps)
+    })
+
+    return tasks
+}
+
+async function getMonthlyRepeatTasks(userId: string, month: Date) {
+    const repeatTasksDocRef = collection(db, "users", userId, "repeatTasks");
+    const repeatTasksDocs = await getDocs(repeatTasksDocRef);
+
+    let taskIds: string[] = [];
+
+    repeatTasksDocs.forEach(doc => {
+        if (!doc.exists()) return;
+
+        const id = doc.data().id;
+        taskIds.push(...id)
+    });
+
+    return getMonthTaskByIds(userId, taskIds, month);
+}
+
+export async function getMonthTaskByIds(userId: string, taskId: string[], month: Date): Promise<TaskProps[] | null> {
+    if (taskId.length === 0) return null;
+
+    const q = query(collection(db, "users", userId, "tasks"), where("id", "in", taskId));
+    const querySnapshot = await getDocs(q);
+
+    const start = startOfMonth(month)
+    const end = endOfMonth(month);
+
+    let tasks: TaskProps[] = [];
+    querySnapshot.forEach(doc => {
+        const data = doc.data() as TaskProps
+
+        if (typeof data.repeat === "string" && data.repeat === "Daily") {
+            const newData = Array.from({ length: end.getDate() }).map((_, index) => {
+                const newDate = Timestamp.fromDate(new Date((data.date as Timestamp).toDate().setDate(index + 1)))
+
+                const newData = {
+                    ...data,
+                    date: newDate
+                }
+
+                return newData
+            })
+
+            newData.forEach(task => tasks.push(task))
+        }
+
+        else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
+            // pegar todos os dias do mes selecionado
+            const days = eachDayOfInterval({start, end})
+
+            // verficar qual o dia da semana
+            days.forEach(day => {
+                // adicionar a tarefa com o dia da semana igual ao dia
+                const newDate = Timestamp.fromDate(new Date((data.date as Timestamp).toDate().setDate(day.getDate())))
+
+                const weekDay = format(day, "EEEE")
+                const repeatDays: string[] = Object.values(data.repeat)[0]
+                if (repeatDays.includes(weekDay)) {
+                    const newData = {
+                        ...data,
+                        date: newDate
+                    }
+                    tasks.push(newData)
+                }
+            })
+        }
+        // else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
+        //     const selecteDay = month.getDate()
+        //     const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
+        //     if (selecteDay === taskDate) {
+        //         tasks.push(data)
+        //     }
         // }
     });
 

@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { useEffect, useRef, useState } from "react";
-import TimePicker from "./ui/time-picket";
+import TimePicker from "./ui/time-picker";
 import DurationPicker from "./ui/duration-picker";
 import PriorityPicker from "./ui/priority-picker";
 import TagsPicker from "./ui/tags-picker";
@@ -16,11 +16,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { NewTaskProps, TaskProps } from "@/types/types";
 import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
+import { useDailify } from "./dailifyContext";
 
-export default function NewTask({ onNewTask, currentSelectedDate }: NewTaskProps) {
+export default function NewTask() {
+    const { selectedDay, setNewTask } = useDailify()
+
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
-    const [selectedDate, setSelectedDate] = useState<Date>(currentSelectedDate)
+    const [selectedDate, setSelectedDate] = useState<Date>(selectedDay)
     // const [fullDate, setFullDate] = useState<Date | undefined>()
     const [selectedDuration, setSelectedDuration] = useState<string>()
     const [priority, setPriority] = useState<number>(0)
@@ -48,13 +51,13 @@ export default function NewTask({ onNewTask, currentSelectedDate }: NewTaskProps
             repeat
         }
 
-        await saveTask(userId, taskData)
-        onNewTask(taskData)
+        // await saveTask(userId, taskData)
+        setNewTask(taskData)
     }
 
     useEffect(() => {
-        setSelectedDate(currentSelectedDate)
-    }, [currentSelectedDate])
+        setSelectedDate(selectedDay)
+    }, [selectedDay])
 
     return (
         <Dialog>
@@ -115,13 +118,13 @@ export default function NewTask({ onNewTask, currentSelectedDate }: NewTaskProps
                     </div>
                 </div>
 
-                <DialogClose asChild>
+                {/* <DialogClose asChild> */}
                     <Button variant={"outline"} className="w-full"
                         onClick={() => addNewTask()}
                     >
                         <PlusIcon />
                     </Button>
-                </DialogClose>
+                {/* </DialogClose> */}
             </DialogContent>
         </Dialog>
     )

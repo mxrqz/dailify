@@ -49,7 +49,7 @@ export interface RepeatPickerProps {
 
 export interface NewTaskProps {
     onNewTask: (newTask: TaskProps) => void;
-    currentSelectedDate: Date,
+    // currentSelectedDate: Date,
 }
 
 export interface FormDataValues {

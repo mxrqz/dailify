@@ -6,4 +6,22 @@ export const prioritySelectedBgColor = ["data-[state=on]:bg-gray-500/70", "data-
 export const tagsBgColors2 = ["bg-[#eae4e9ff]", "bg-[#fff1e6ff]", "bg-[#fde2e4ff]", "bg-[#fad2e1ff]", "bg-[#e2ece9ff]", "bg-[#bee1e6ff]", "bg-[#f0efebff]", "bg-[#dfe7fdff]", "bg-[#cddafdff]"]
 export const tagsBorderColors2 = ["border-[#eae4e9ff]", "border-[#fff1e6ff]", "border-[#fde2e4ff]", "border-[#fad2e1ff]", "border-[#e2ece9ff]", "border-[#bee1e6ff]", "border-[#f0efebff]", "border-[#dfe7fdff]", "border-[#cddafdff]"]
 
+export const paletteColors = ["bg-[#ffadadff]", "bg-[#ffd6a5ff]", "bg-[#fdffb6ff]", "bg-[#caffbfff]", "bg-[#9bf6ffff]", "bg-[#a0c4ffff]", "bg-[#bdb2ffff]", "bg-[#ffc6ffff]", "bg-[#fffffcff]"]
+
 export const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+export const variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            duration: 1,
+            staggerChildren: 0.1
+        }
+    }
+}
+
+export const childVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.1 } }
+}

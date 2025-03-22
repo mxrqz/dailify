@@ -10,7 +10,7 @@ export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerP
 
     useEffect(() => {
         if (!hour || !minute || !time || !selectedDate) return
-        const hourNumber = time === "am" ? Number(hour) : Number(hour) + 12
+        const hourNumber = time === "am" ? Number(hour) : (Number(hour) === 12 ? Number(hour) : Number(hour) + 12)
         const minuteNumber = Number(minute)
         const addTime = selectedDate.setHours(hourNumber, minuteNumber, 0)
         const finalDate = new Date(addTime)

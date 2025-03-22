@@ -6,45 +6,32 @@ import { Badge } from "./ui/badge";
 
 import { motion } from 'framer-motion';
 import NewTask from "./new-task";
-import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2 } from "@/conts/conts";
+import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/conts/conts";
 import { getTasksForDay } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
 import { Timestamp } from "firebase/firestore";
 import { getTime } from "@/functions/functions";
 import { format } from "date-fns";
+import { useDailify } from "./dailifyContext";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 
-const variants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            duration: 1,
-            staggerChildren: 0.1
-        }
-    }
-}
-
-const childVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.1 } }
-}
-
-export default function DailyTasks({ day }: DailyTasksProps) {
+export default function DailyTasks() {
+    const { selectedDay, newTask } = useDailify()
     const { user } = useUser()
-    const [selectedDay, setSelectedDay] = useState<Date>(day)
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
 
-    const handleNewTask = (task: TaskProps) => {
-        const taskDate = format((task.date as Date), 'PPP')
+    useEffect(() => {
+        if (!newTask) return
+        const taskDate = format((newTask.date as Date), 'PPP')
         const currentSelectedDay = format(selectedDay, 'PPP')
 
         if (taskDate === currentSelectedDay) {
             setDayTasks((prev) => {
-                if (!prev) return [task]
-                return [...prev, task]
+                if (!prev) return [newTask]
+                return [...prev, newTask]
             })
         }
-    }
+    }, [newTask])
 
     const getTasks = async () => {
         if (!user) return
@@ -59,9 +46,8 @@ export default function DailyTasks({ day }: DailyTasksProps) {
     }, [selectedDay])
 
     useEffect(() => {
-        setSelectedDay(day)
         setDayTasks([])
-    }, [day])
+    }, [selectedDay])
 
     function isAfterTime(time: Timestamp | Date): boolean {
         const { hours, minutes } = getTime(time, "{hours, minutes}")
@@ -113,57 +99,69 @@ export default function DailyTasks({ day }: DailyTasksProps) {
                             animate="visible"
                         >
                             {group.tasks.map((task) => (
-                                <motion.li key={task.id} className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full 
-                                    ${task.completed && "border-green-500 bg-green-500/5"}
-                                    ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}
-                                    `}
-                                    variants={childVariants}
-                                >
-                                    <div className="flex flex-col w-full">
-                                        <div className="flex w-full justify-between items-center">
-                                            <span className="text-sm font-medium">{task.title}</span>
-                                            <Badge variant={"outline"} className="text-xs">{task.duration}</Badge>
-                                        </div>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <motion.li key={task.id}
+                                            className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer 
+                                                ${task.completed && "border-green-500 bg-green-500/5"}
+                                                ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}`
+                                            }
+                                            variants={childVariants}
+                                        >
+                                            <div className="flex flex-col w-full">
+                                                <div className="flex w-full justify-between items-center">
+                                                    <span className="text-sm font-medium">{task.title}</span>
+                                                    <Badge variant={"outline"} className="text-xs">{task.duration}</Badge>
+                                                </div>
 
-                                        <p className="text-sm text-muted-foreground">{task.description}</p>
-                                    </div>
+                                                <p className="text-sm text-muted-foreground">{task.description}</p>
+                                            </div>
 
-                                    <motion.ul className="w-full flex flex-wrap gap-1"
-                                        variants={variants}
-                                        initial="hidden"
-                                        animate="visible"
-                                    >
-                                        {task.repeat && (
-                                            <li className="shrink-0">
-                                                <Badge variant={"outline"}>
-                                                    {typeof task.repeat === "string" ? task.repeat : "Weekly"}
-                                                </Badge>
-                                            </li>
-                                        )}
+                                            <motion.ul className="w-full flex flex-wrap gap-1"
+                                                variants={variants}
+                                                initial="hidden"
+                                                animate="visible"
+                                            >
+                                                {task.repeat && (
+                                                    <li className="shrink-0">
+                                                        <Badge variant={"outline"}>
+                                                            {typeof task.repeat === "string" ? task.repeat : "Weekly"}
+                                                        </Badge>
+                                                    </li>
+                                                )}
 
-                                        <li className="shrink-0">
-                                            <Badge variant={"secondary"}
-                                                className={`${priorityTextColor[task.priority]} ${priorityBgColor[task.priority]} ${priorityBorderColor[task.priority]}`}>
-                                                {priorityText[task.priority]}
-                                            </Badge>
-                                        </li>
+                                                <li className="shrink-0">
+                                                    <Badge variant={"secondary"}
+                                                        className={`${priorityTextColor[task.priority]} ${priorityBgColor[task.priority]} ${priorityBorderColor[task.priority]}`}>
+                                                        {priorityText[task.priority]}
+                                                    </Badge>
+                                                </li>
 
-                                        {task.tags && task.tags.length > 0 && task.tags.map((tag, index) => (
-                                            <li key={index}>
-                                                <Badge variant={"secondary"} className={`${tagsBgColors2[index]} dark:text-background`}>
-                                                    {tag}
-                                                </Badge>
-                                            </li>
-                                        ))}
-                                    </motion.ul>
-                                </motion.li>
+                                                {task.tags && task.tags.length > 0 && task.tags.map((tag, index) => (
+                                                    <li key={index}>
+                                                        <Badge variant={"secondary"} className={`${tagsBgColors2[index]} dark:text-background`}>
+                                                            {tag}
+                                                        </Badge>
+                                                    </li>
+                                                ))}
+                                            </motion.ul>
+                                        </motion.li>
+                                    </SheetTrigger>
+
+                                    <SheetContent className="">
+                                        <SheetHeader>
+                                            <SheetTitle>{task.title}</SheetTitle>
+                                            <SheetDescription>{task.description}</SheetDescription>
+                                        </SheetHeader>
+                                    </SheetContent>
+                                </Sheet>
                             ))}
                         </motion.ul>
                     </motion.li>
                 ))}
             </motion.ul>
 
-            <NewTask onNewTask={handleNewTask} currentSelectedDate={day} />
+            <NewTask />
         </section>
     )
 }
