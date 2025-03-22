@@ -1,4 +1,4 @@
-import { DailyTasksProps, TaskProps } from "@/types/types";
+import { TaskProps } from "@/types/types";
 import { ClockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Separator } from "./ui/separator";

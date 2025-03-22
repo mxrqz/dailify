@@ -8,7 +8,7 @@ import { useUser } from "@clerk/clerk-react";
 import { getTasksForMonth } from "@/functions/firebase";
 
 export default function Home() {
-    const { selectedDay, isCalendar, tasks, setTasks, isLoading, setIsLoading, newTask } = useDailify()
+    const { selectedDay, isCalendar, setTasks, setIsLoading, newTask } = useDailify()
     const { user } = useUser()
 
     const getTasks = async () => {

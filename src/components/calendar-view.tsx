@@ -1,11 +1,10 @@
 import { motion } from "framer-motion";
 import NewTask from "./new-task";
-import { paletteColors, tagsBgColors2, weekDays } from "@/conts/conts";
+import { paletteColors, weekDays } from "@/conts/conts";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Calendar1Icon, ChevronLeft, ChevronRight, DotIcon, Loader2Icon } from "lucide-react";
+import { Calendar1Icon, ChevronLeft, ChevronRight, Loader2Icon } from "lucide-react";
 import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameMonth, isSameYear, isToday, startOfMonth, startOfWeek, subMonths } from "date-fns";
-import { useState } from "react";
 import { ptBR } from "date-fns/locale";
 import { useDailify } from "./dailifyContext";
 import { Timestamp } from "firebase/firestore";

@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import { DatePicker } from "./ui/date-picker";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -13,7 +13,7 @@ import RepeatPicker from "./ui/repeat-picker";
 import { Button } from "./ui/button";
 
 import { v4 as uuidv4 } from 'uuid';
-import { NewTaskProps, TaskProps } from "@/types/types";
+import { TaskProps } from "@/types/types";
 import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
 import { useDailify } from "./dailifyContext";
@@ -51,7 +51,7 @@ export default function NewTask() {
             repeat
         }
 
-        // await saveTask(userId, taskData)
+        await saveTask(userId, taskData)
         setNewTask(taskData)
     }
 
