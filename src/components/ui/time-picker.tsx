@@ -1,12 +1,37 @@
-import { TimePickerProps } from "@/types/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
-import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 import { useEffect, useState } from "react";
+import { TimePickerProps } from "@/types/types";
+import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
+import { Timestamp } from "firebase/firestore";
 
-export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerProps) {
-    const [hour, setHour] = useState<string>("09")
-    const [minute, setMinute] = useState<string>("00")
-    const [time, setTime] = useState<string>("am")
+export default function TimePicker({ onSelectedTime, selectedDate, task }: TimePickerProps) {
+    const [hour, setHour] = useState<string>(() => {
+        if (task) {
+            const hour = task.date instanceof Timestamp ?
+                task.date.toDate().getHours() > 12 ? String(task.date.toDate().getHours() - 12) : String(task.date.toDate().getHours())
+                : task.date.getHours() > 12 ? String(task.date.getHours() - 12) : String(task.date.getHours())
+            return hour
+        }
+        return "09"
+    })
+    const [minute, setMinute] = useState<string>(() => {
+        if (task) {
+            const minute = task.date instanceof Timestamp ?
+                String(task.date.toDate().getMinutes())
+                : String(task.date.getMinutes());
+            return minute
+        }
+        return "00"
+    })
+    const [time, setTime] = useState<string>(() => {
+        if (task) {
+            const time = task.date instanceof Timestamp ?
+                (task.date as Timestamp).toDate().getHours() > 12 ? "pm" : "am"
+                : task.date.getHours() > 12 ? "pm" : "am";
+            return time
+        }
+        return "am"
+    })
 
     useEffect(() => {
         if (!hour || !minute || !time || !selectedDate) return
@@ -19,7 +44,7 @@ export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerP
 
     return (
         <div className="flex gap-2 w-full" id="time">
-            <Select defaultValue="09" onValueChange={setHour}>
+            <Select defaultValue={hour.padStart(2, "0") || "09"} onValueChange={setHour}>
                 <SelectTrigger className="h-10 w-full">
                     <SelectValue placeholder="Hour" />
                 </SelectTrigger>
@@ -36,7 +61,7 @@ export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerP
                 </SelectContent>
             </Select>
 
-            <Select defaultValue="00" onValueChange={setMinute}>
+            <Select defaultValue={minute.padStart(2, "0") || "00"} onValueChange={setMinute}>
                 <SelectTrigger className="h-10 w-full">
                     <SelectValue placeholder="Min" />
                 </SelectTrigger>
@@ -50,7 +75,7 @@ export default function TimePicker({ onSelectedTime, selectedDate }: TimePickerP
                 </SelectContent>
             </Select>
 
-            <ToggleGroup type="single" className="flex flex-col border w-full" onValueChange={setTime} defaultValue="am">
+            <ToggleGroup type="single" className="flex flex-col border w-full" onValueChange={setTime} defaultValue={time || "am"}>
                 <ToggleGroupItem value="am" className="text-xs font-semibold first:rounded-l-none">AM</ToggleGroupItem>
                 <ToggleGroupItem value="pm" className="text-xs font-semibold border-t rounded-none last:rounded-r-none">PM</ToggleGroupItem>
             </ToggleGroup>

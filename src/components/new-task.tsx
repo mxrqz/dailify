@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import { DatePicker } from "./ui/date-picker";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -118,13 +118,13 @@ export default function NewTask() {
                     </div>
                 </div>
 
-                {/* <DialogClose asChild> */}
+                <DialogClose asChild>
                     <Button variant={"outline"} className="w-full"
                         onClick={() => addNewTask()}
                     >
                         <PlusIcon />
                     </Button>
-                {/* </DialogClose> */}
+                </DialogClose>
             </DialogContent>
         </Dialog>
     )

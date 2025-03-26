@@ -5,8 +5,8 @@ import { PlusIcon } from "lucide-react";
 import { Badge } from "./badge";
 import { TagsPickerProps } from "@/types/types";
 
-export default function TagsPicker({ onSelectedTags }: TagsPickerProps) {
-    const [tags, setTags] = useState<string[]>([])
+export default function TagsPicker({ onSelectedTags, task }: TagsPickerProps) {
+    const [tags, setTags] = useState<string[]>(task && task.tags ? task.tags : [])
     const inputRef = useRef<HTMLInputElement>(null)
 
     const addTag = () => {

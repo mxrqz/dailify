@@ -13,7 +13,7 @@ import { Timestamp } from "firebase/firestore";
 import { getTime } from "@/functions/functions";
 import { format } from "date-fns";
 import { useDailify } from "./dailifyContext";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 
 export default function DailyTasks() {
     const { selectedDay, newTask } = useDailify()
@@ -22,14 +22,27 @@ export default function DailyTasks() {
 
     useEffect(() => {
         if (!newTask) return
+
         const taskDate = format((newTask.date as Date), 'PPP')
         const currentSelectedDay = format(selectedDay, 'PPP')
 
         if (taskDate === currentSelectedDay) {
             setDayTasks((prev) => {
-                if (!prev) return [newTask]
-                return [...prev, newTask]
-            })
+                if (!prev) return [newTask];
+    
+                // Verifica se a task já existe pelo id
+                const existingTaskIndex = prev.findIndex(task => task.id === newTask.id);
+    
+                if (existingTaskIndex !== -1) {
+                    // Atualiza a task existente
+                    const updatedTasks = [...prev];
+                    updatedTasks[existingTaskIndex] = newTask;
+                    return updatedTasks;
+                } 
+    
+                // Adiciona a nova task se não existir
+                return [...prev, newTask];
+            });
         }
     }, [newTask])
 
@@ -98,11 +111,11 @@ export default function DailyTasks() {
                             initial="hidden"
                             animate="visible"
                         >
-                            {group.tasks.map((task) => (
-                                <Sheet>
-                                    <SheetTrigger asChild>
+                            {group.tasks.map((task, index) => (
+                                <EditTask key={index}>
+                                    <EditTaskTrigger>
                                         <motion.li key={task.id}
-                                            className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer 
+                                            className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer text-start
                                                 ${task.completed && "border-green-500 bg-green-500/5"}
                                                 ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}`
                                             }
@@ -146,15 +159,10 @@ export default function DailyTasks() {
                                                 ))}
                                             </motion.ul>
                                         </motion.li>
-                                    </SheetTrigger>
+                                    </EditTaskTrigger>
 
-                                    <SheetContent className="">
-                                        <SheetHeader>
-                                            <SheetTitle>{task.title}</SheetTitle>
-                                            <SheetDescription>{task.description}</SheetDescription>
-                                        </SheetHeader>
-                                    </SheetContent>
-                                </Sheet>
+                                    <EditTaskContent task={task} />
+                                </EditTask>
                             ))}
                         </motion.ul>
                     </motion.li>

@@ -53,6 +53,11 @@ export async function saveTask(userId: string, taskData: TaskProps) {
     }
 }
 
+export async function saveEditedTask(userId: string, taskData: TaskProps) {
+    const docToUpdate = doc(db, "users", userId, "tasks", taskData.id);
+    updateDoc(docToUpdate, { ...taskData })
+}
+
 export async function getTasksForDay(userId: string, selectedDate: Date) {
     const tasks = await getDayTasks(selectedDate, userId);
     const repeatTasks = await getRepeatTasks(userId, selectedDate);
@@ -110,28 +115,30 @@ async function getRepeatTasks(userId: string, selectedDate: Date) {
 export async function getTaskByIds(userId: string, taskId: string[], selectedDate: Date): Promise<TaskProps[] | null> {
     if (taskId.length === 0) return null;
 
-    const q = query(collection(db, "users", userId, "tasks"), where("id", "in", taskId));
+    const q = query(collection(db, "users", userId, "tasks"))
+    // , where("id", "==", taskId));
     const querySnapshot = await getDocs(q);
 
     let tasks: TaskProps[] = [];
     querySnapshot.forEach(doc => {
         const data = doc.data() as TaskProps
+        if (!taskId.includes(data.id))
 
-        if (typeof data.repeat === "string" && data.repeat === "Daily") {
-            tasks.push(data)
-        } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
-            const repeatDays = Object.values(data.repeat)[0]
-            const selectedDay = weekDays[selectedDate.getDay()]
-            if (repeatDays?.includes(selectedDay)) {
+            if (typeof data.repeat === "string" && data.repeat === "Daily") {
                 tasks.push(data)
+            } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
+                const repeatDays = Object.values(data.repeat)[0]
+                const selectedDay = weekDays[selectedDate.getDay()]
+                if (repeatDays?.includes(selectedDay)) {
+                    tasks.push(data)
+                }
+            } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
+                const selecteDay = selectedDate.getDate()
+                const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
+                if (selecteDay === taskDate) {
+                    tasks.push(data)
+                }
             }
-        } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
-            const selecteDay = selectedDate.getDate()
-            const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
-            if (selecteDay === taskDate) {
-                tasks.push(data)
-            }
-        }
         // if (data.date === format(selectedDate, "PPP")) {
         //     tasks.push(data)
         // }
@@ -209,7 +216,8 @@ async function getMonthlyRepeatTasks(userId: string, month: Date) {
 export async function getMonthTaskByIds(userId: string, taskId: string[], month: Date): Promise<TaskProps[] | null> {
     if (taskId.length === 0) return null;
 
-    const q = query(collection(db, "users", userId, "tasks"), where("id", "in", taskId));
+    const q = query(collection(db, "users", userId, "tasks"))
+    // , where("id", "==", taskId));
     const querySnapshot = await getDocs(q);
 
     const start = startOfMonth(month)
@@ -218,6 +226,7 @@ export async function getMonthTaskByIds(userId: string, taskId: string[], month:
     let tasks: TaskProps[] = [];
     querySnapshot.forEach(doc => {
         const data = doc.data() as TaskProps
+        if (!taskId.includes(data.id)) return
 
         if (typeof data.repeat === "string" && data.repeat === "Daily") {
             const newData = Array.from({ length: end.getDate() }).map((_, index) => {
@@ -236,7 +245,7 @@ export async function getMonthTaskByIds(userId: string, taskId: string[], month:
 
         else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
             // pegar todos os dias do mes selecionado
-            const days = eachDayOfInterval({start, end})
+            const days = eachDayOfInterval({ start, end })
 
             // verficar qual o dia da semana
             days.forEach(day => {

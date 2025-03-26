@@ -105,9 +105,9 @@ export function CalendarView() {
                       ?.filter(task => (task.date as Timestamp).toDate().getDate() === day.getDate())
                       .slice(0, 3)
                       .map((task, index) => (
-                        <li key={index} className={`w-full truncate text-xs flex items-center gap-1 border rounded-md px-1`}>
-                          <div className={`size-2 rounded-full ${paletteColors[index]}`} />
-                          <span>{task.title}</span>
+                        <li key={index} className={`w-full text-xs flex items-center gap-1 border rounded-md px-1`}>
+                          <div className={`size-2 rounded-full shrink-0 ${paletteColors[index]}`} />
+                          <span className="truncate">{task.title}</span>
                         </li>
                       ))
                   )}

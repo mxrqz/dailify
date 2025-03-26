@@ -2,9 +2,30 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { DurationPickerProps } from "@/types/types";
 
-export default function DurationPicker({onSelectedDuration}: DurationPickerProps) {
-    const [durationHour, setDurationHour] = useState<string>("")
-    const [durationMinute, setDurationMinute] = useState<string>("")
+export default function DurationPicker({ onSelectedDuration, task }: DurationPickerProps) {
+    const [durationHour, setDurationHour] = useState<string>(() => {
+        if (task && task.duration.includes("h")) {
+            const [hour] = task.duration.split("h")
+            return hour
+        }
+
+        return ""
+    })
+    const [durationMinute, setDurationMinute] = useState<string>(() => {
+        if (task && task.duration.includes("h")) {
+            const [_, minute] = task.duration.split("h")
+
+            if (minute) {
+                const minuteSplit = minute.split('m')[0]
+                return minuteSplit
+            }
+        } else if (task) {
+            const minuteSplit = task.duration.split('m')[0]
+            return minuteSplit
+        }
+
+        return ""
+    })
 
     useEffect(() => {
         if (!durationHour && !durationMinute) return
@@ -14,7 +35,7 @@ export default function DurationPicker({onSelectedDuration}: DurationPickerProps
 
     return (
         <div className="flex gap-3" id="duration">
-            <Select onValueChange={setDurationHour}>
+            <Select onValueChange={setDurationHour} defaultValue={durationHour}>
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="hour" />
                 </SelectTrigger>
@@ -28,7 +49,7 @@ export default function DurationPicker({onSelectedDuration}: DurationPickerProps
                 </SelectContent>
             </Select>
 
-            <Select onValueChange={setDurationMinute}>
+            <Select onValueChange={setDurationMinute} defaultValue={durationMinute}>
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="minute" />
                 </SelectTrigger>

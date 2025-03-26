@@ -29,22 +29,27 @@ export interface DatePickerProps {
 export interface TimePickerProps {
     onSelectedTime: (selectedTime: Date) => void;
     selectedDate: Date
+    task?: TaskProps
 }
 
 export interface DurationPickerProps {
     onSelectedDuration: (selectedDuration: string) => void;
+    task?: TaskProps
 }
 
 export interface PriorityPickerProps {
     onSelectedPriority: (selectedPriority: number) => void;
+    task?: TaskProps
 }
 
 export interface TagsPickerProps {
     onSelectedTags: (selectedTags: string[]) => void;
+    task?: TaskProps
 }
 
 export interface RepeatPickerProps {
     onSelectedRepeat: (selectedRepeat: string | { Weekly: string[] | undefined }) => void;
+    task?: TaskProps
 }
 
 export interface NewTaskProps {
