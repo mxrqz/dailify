@@ -11,8 +11,7 @@ import PriorityPicker from "./ui/priority-picker";
 import TagsPicker from "./ui/tags-picker";
 import RepeatPicker from "./ui/repeat-picker";
 import { Button } from "./ui/button";
-
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid'
 import { TaskProps } from "@/types/types";
 import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
@@ -37,7 +36,7 @@ export default function NewTask() {
         const userId = user.id
         const title = titleRef.current.value
         const desc = descriptionRef.current.value
-        const id = uuidv4()
+        const id = nanoid(6)
 
         const taskData: TaskProps = {
             date: selectedDate,

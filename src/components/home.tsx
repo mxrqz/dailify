@@ -6,9 +6,10 @@ import { CalendarView } from "./calendar-view";
 import { useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { getTasksForMonth } from "@/functions/firebase";
+import { isSameMonth } from "date-fns";
 
 export default function Home() {
-    const { selectedDay, isCalendar, setTasks, setIsLoading, newTask } = useDailify()
+    const { selectedDay, isCalendar, setTasks, setIsLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
     const { user } = useUser()
 
     const getTasks = async () => {
@@ -19,22 +20,16 @@ export default function Home() {
     }
 
     useEffect(() => {
-        getTasks()
+        if (!currentMonth) {
+            setCurrentMonth(selectedDay)
+            getTasks()
+        }
+
+        if (currentMonth && !isSameMonth(currentMonth, selectedDay)) {
+            setCurrentMonth(selectedDay)
+            getTasks()
+        }
     }, [selectedDay, newTask])
-    // const [selectedDay, setSelectedDay] = useState<Date>(new Date())
-    // const [calendarPosition, setCalendarPosition] = useState<{ top: string, left: string, width: string, height: string }>()
-
-
-
-    // useEffect(() => {
-    //     const calendar = document.getElementById("calendar")
-    //     const calendarPopup = document.getElementById("calendar-popup")
-
-    //     if (calendar && calendarPopup) {
-    //         const rect = calendar.getBoundingClientRect();
-    //         setCalendarPosition({ top: `${rect.top}px`, left: `${rect.left}px`, width: `${rect.width}px`, height: `${rect.height}px` })
-    //     }
-    // }, [])
 
     return (
         <main className="h-full max-h-full overflow-hidden flex flex-col gap-5 py-5 px-[clamp(1rem,5vw,6rem)] relative" id="main">

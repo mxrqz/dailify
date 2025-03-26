@@ -7,17 +7,15 @@ import { Badge } from "./ui/badge";
 import { motion } from 'framer-motion';
 import NewTask from "./new-task";
 import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/conts/conts";
-import { getTasksForDay } from "@/functions/firebase";
-import { useUser } from "@clerk/clerk-react";
 import { Timestamp } from "firebase/firestore";
 import { getTime } from "@/functions/functions";
-import { format } from "date-fns";
+import { format} from "date-fns";
 import { useDailify } from "./dailifyContext";
+
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 
 export default function DailyTasks() {
-    const { selectedDay, newTask } = useDailify()
-    const { user } = useUser()
+    const { selectedDay, newTask, tasks, isCalendar } = useDailify()
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
 
     useEffect(() => {
@@ -29,38 +27,29 @@ export default function DailyTasks() {
         if (taskDate === currentSelectedDay) {
             setDayTasks((prev) => {
                 if (!prev) return [newTask];
-    
+
                 // Verifica se a task já existe pelo id
                 const existingTaskIndex = prev.findIndex(task => task.id === newTask.id);
-    
+
                 if (existingTaskIndex !== -1) {
                     // Atualiza a task existente
                     const updatedTasks = [...prev];
                     updatedTasks[existingTaskIndex] = newTask;
                     return updatedTasks;
-                } 
-    
+                }
+
                 // Adiciona a nova task se não existir
                 return [...prev, newTask];
             });
         }
     }, [newTask])
 
-    const getTasks = async () => {
-        if (!user) return
-        // const tasks = await getDayTasks(selectedDay, user.id)
-        const tasks = await getTasksForDay(user.id, selectedDay)
-        setDayTasks(tasks)
-    }
-
     useEffect(() => {
-        if (!selectedDay) return
-        getTasks()
-    }, [selectedDay])
+        if (!tasks) return
 
-    useEffect(() => {
-        setDayTasks([])
-    }, [selectedDay])
+        const todayTasks = tasks?.filter(task => (task.date as Timestamp).toDate().getDate() === selectedDay.getDate())
+        setDayTasks(todayTasks)
+    }, [tasks, selectedDay, isCalendar])
 
     function isAfterTime(time: Timestamp | Date): boolean {
         const { hours, minutes } = getTime(time, "{hours, minutes}")

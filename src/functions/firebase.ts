@@ -58,6 +58,8 @@ export async function saveEditedTask(userId: string, taskData: TaskProps) {
     updateDoc(docToUpdate, { ...taskData })
 }
 
+// código antigo que ta dando mto problema e ta mto complexo cheio de erros
+
 export async function getTasksForDay(userId: string, selectedDate: Date) {
     const tasks = await getDayTasks(selectedDate, userId);
     const repeatTasks = await getRepeatTasks(userId, selectedDate);
@@ -70,9 +72,9 @@ export async function getTasksForDay(userId: string, selectedDate: Date) {
                     .map(task => [task.id!, task])
             ).values()
         );
-
         return unidedTasks
     }
+
 
     return tasks
 }
@@ -154,21 +156,13 @@ export async function getTasksForMonth(userId: string, month: Date) {
     const repeatTasks = await getMonthlyRepeatTasks(userId, month)
 
     if (repeatTasks) {
-        // const unidedTasks = Array.from(
-        //     new Map(
-        //         [...tasks, ...repeatTasks]
-        //             .filter((task): task is TaskProps => task !== null && task !== undefined && task.id !== null && task.id !== undefined)
-        //             .map(task => [task.id!, task])
-        //     ).values()
-        // );
-
         const uniqueTasks = Array.from(
             new Map(
                 [...tasks, ...repeatTasks]
                     .filter((task): task is TaskProps =>
                         task !== null && task !== undefined && task.id !== null && task.id !== undefined && task.date !== undefined
                     )
-                    .map(task => [`${task.id}-${task.date}`, task]) // Usa id + date como chave
+                    .map(task => [`${task.id}-${task.date}`, task])
             ).values()
         );
 
