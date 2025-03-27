@@ -27,18 +27,13 @@ export default function DailyTasks() {
         if (taskDate === currentSelectedDay) {
             setDayTasks((prev) => {
                 if (!prev) return [newTask];
-
-                // Verifica se a task já existe pelo id
                 const existingTaskIndex = prev.findIndex(task => task.id === newTask.id);
-
                 if (existingTaskIndex !== -1) {
-                    // Atualiza a task existente
                     const updatedTasks = [...prev];
                     updatedTasks[existingTaskIndex] = newTask;
                     return updatedTasks;
                 }
 
-                // Adiciona a nova task se não existir
                 return [...prev, newTask];
             });
         }
@@ -46,7 +41,6 @@ export default function DailyTasks() {
 
     useEffect(() => {
         if (!tasks) return
-
         const todayTasks = tasks?.filter(task => (task.date as Timestamp).toDate().getDate() === selectedDay.getDate())
         setDayTasks(todayTasks)
     }, [tasks, selectedDay, isCalendar])
