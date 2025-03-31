@@ -32,7 +32,7 @@ export default function Home() {
     }, [selectedDay, newTask])
 
     return (
-        <main className="h-full max-h-full overflow-hidden flex flex-col gap-5 py-5 px-[clamp(1rem,5vw,6rem)] relative" id="main">
+        <main className="h-full max-h-full flex flex-col gap-5 py-5 px-[clamp(1rem,5vw,6rem)] relative" id="main">
             <Header />
 
             {!isCalendar ? (

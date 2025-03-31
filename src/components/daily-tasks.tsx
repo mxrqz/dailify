@@ -5,11 +5,10 @@ import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
 
 import { motion } from 'framer-motion';
-import NewTask from "./new-task";
 import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/conts/conts";
 import { Timestamp } from "firebase/firestore";
 import { getTime } from "@/functions/functions";
-import { format} from "date-fns";
+import { format } from "date-fns";
 import { useDailify } from "./dailifyContext";
 
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
@@ -45,14 +44,14 @@ export default function DailyTasks() {
         setDayTasks(todayTasks)
     }, [tasks, selectedDay, isCalendar])
 
-    function isAfterTime(time: Timestamp | Date): boolean {
-        const { hours, minutes } = getTime(time, "{hours, minutes}")
-        const now = new Date();
-        const nowMinutes = now.getHours() * 60 + now.getMinutes();
-        const targetMinutes = hours * 60 + minutes;
+    // function isAfterTime(time: Timestamp | Date): boolean {
+    //     const { hours, minutes } = getTime(time, "{hours, minutes}")
+    //     const now = new Date();
+    //     const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    //     const targetMinutes = hours * 60 + minutes;
 
-        return nowMinutes > targetMinutes;
-    }
+    //     return nowMinutes > targetMinutes;
+    // }
 
     if (!dayTasks) return
 
@@ -73,12 +72,18 @@ export default function DailyTasks() {
     });
 
     return (
-        <section className="w-full h-full max-h-full overflow-hidden flex flex-col gap-3 justify-between">
-            <motion.ul className="w-full h-full flex flex-col gap-5 overflow-y-scroll scrollbar-floating "
+
+        // <section className="w-full h-full max-h-full overflow-hidden flex flex-col gap-3 justify-between">
+        //     <motion.ul className="w-full h-full flex flex-col gap-5 overflow-y-scroll scrollbar-floating "
+
+        <section className="w-full h-full max-h-full flex flex-col gap-3 justify-between">
+            <motion.ul className="w-full h-full flex flex-col gap-5"
                 variants={variants}
                 initial="hidden"
                 animate="visible"
             >
+                <span className="text-3xl font-bold">Today's Tasks</span>
+                
                 {groupedTasks.map((group) => (
                     <motion.li key={group.time} className="flex flex-col gap-2"
                         variants={childVariants}
@@ -99,8 +104,9 @@ export default function DailyTasks() {
                                     <EditTaskTrigger>
                                         <motion.li key={task.id}
                                             className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer text-start
-                                                ${task.completed && "border-green-500 bg-green-500/5"}
-                                                ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}`
+                                                `
+                                                // ${task.completed && "border-green-500 bg-green-500/5"}
+                                                // ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}
                                             }
                                             variants={childVariants}
                                         >
@@ -152,7 +158,7 @@ export default function DailyTasks() {
                 ))}
             </motion.ul>
 
-            <NewTask />
+            {/* <NewTask /> */}
         </section>
     )
 }

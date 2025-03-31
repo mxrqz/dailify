@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useRef } from "react";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { TaskProps } from "@/types/types";
 import RepeatPicker from "./ui/repeat-picker";
 import { Label } from "./ui/label";
@@ -45,7 +45,7 @@ export function EditTaskTrigger({ children }: { children: ReactNode }) {
 }
 
 export function EditTaskContent({ task }: { task: TaskProps }) {
-    const { setNewTask} = useDailify()
+    const { setNewTask } = useDailify()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -137,13 +137,17 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
             </div>
 
             <SheetFooter className="flex-row justify-end">
-                <Button variant={'outline'} className="cursor-pointer">
-                    Cancel
-                </Button>
+                <SheetClose>
+                    <Button variant={'outline'} className="cursor-pointer">
+                        Cancel
+                    </Button>
+                </SheetClose>
 
-                <Button variant={"default"} className="cursor-pointer" onClick={editTask}>
-                    Save
-                </Button>
+                <SheetClose>
+                    <Button variant={"default"} className="cursor-pointer" onClick={editTask}>
+                        Save
+                    </Button>
+                </SheetClose>
             </SheetFooter>
         </SheetContent>
     )

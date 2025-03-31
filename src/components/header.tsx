@@ -11,7 +11,7 @@ const Header = React.memo(() => {
     const { signOut } = useAuth()
 
     return (
-        <header className="inline-flex justify-between items-center w-full">
+        <header className="sticky top-0 h-24 py-3 inline-flex justify-between items-center w-full bg-background/70 backdrop-blur z-10">
             <h1 className="font-bold text-2xl">Dailify</h1>
 
             <div className="inline-flex gap-2 items-center">

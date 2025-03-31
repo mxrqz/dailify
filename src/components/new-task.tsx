@@ -11,7 +11,7 @@ import PriorityPicker from "./ui/priority-picker";
 import TagsPicker from "./ui/tags-picker";
 import RepeatPicker from "./ui/repeat-picker";
 import { Button } from "./ui/button";
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
 import { TaskProps } from "@/types/types";
 import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
@@ -60,8 +60,13 @@ export default function NewTask() {
 
     return (
         <Dialog>
-            <DialogTrigger className="border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 px-4 py-2 has-[>svg]:px-3">
-                <PlusIcon />
+            <DialogTrigger asChild>
+                <Button
+                    size={"icon"}
+                    className="w-full flex h-full"
+                >
+                    <PlusIcon />
+                </Button>
             </DialogTrigger>
 
             <DialogContent className="max-h-[calc(100%-2rem)] overflow-hidden flex flex-col">
