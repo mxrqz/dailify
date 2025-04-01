@@ -29,9 +29,15 @@ export function DailifyProvider({ children }: { children: ReactNode }) {
     const [currentMonth, setCurrentMonth] = useState<Date>()
 
     return (
-        <DailifyContext.Provider value={{
-            selectedDay, setSelectedDay, newTask, setNewTask, isCalendar, setIsCalendar, tasks, setTasks, isLoading, setIsLoading, currentMonth, setCurrentMonth
-        }}
+        <DailifyContext.Provider
+            value={{
+                selectedDay, setSelectedDay,
+                newTask, setNewTask,
+                isCalendar, setIsCalendar,
+                tasks, setTasks,
+                isLoading, setIsLoading,
+                currentMonth, setCurrentMonth
+            }}
         >
             {children}
         </DailifyContext.Provider>

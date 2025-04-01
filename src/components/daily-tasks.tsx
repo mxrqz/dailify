@@ -1,5 +1,5 @@
 import { TaskProps } from "@/types/types";
-import { ClockIcon } from "lucide-react";
+import { ClockIcon, EllipsisVerticalIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
@@ -12,10 +12,42 @@ import { format } from "date-fns";
 import { useDailify } from "./dailifyContext";
 
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
+import { markTaskAsCompleted } from "@/functions/firebase";
+import { useUser } from "@clerk/clerk-react";
+
+function getCompletionDate(task: TaskProps, selectedDay: Date) {
+    if (!Array.isArray(task.completed)) return
+    const taskCompletedDate = task.completed.map(taskDate => (taskDate as Timestamp).toDate())
+    const haveBeenCompletedToday = taskCompletedDate.find(taskDate => taskDate.getDate() === selectedDay.getDate()) ? true : false
+
+    return haveBeenCompletedToday
+}
 
 export default function DailyTasks() {
-    const { selectedDay, newTask, tasks, isCalendar } = useDailify()
+    const { selectedDay, newTask, tasks, setTasks, isCalendar } = useDailify()
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
+    const { user } = useUser()
+
+    const updateTaskToCompleted = (taskId: string) => {
+        const now = new Date()
+        const updatedTasks = tasks?.map(task => {
+            if (task.id !== taskId) return task;
+
+            const isTimestamp = task.date instanceof Timestamp;
+            const completed = task.completed ?? []; // ← garante que completed seja sempre um array
+
+            return {
+                ...task,
+                completed: isTimestamp
+                    ? [...(completed as Timestamp[]), Timestamp.fromDate(now)]
+                    : [...(completed as Date[]), now],
+            };
+        });
+        if (!updatedTasks) return;
+        setTasks(updatedTasks);
+    }
 
     useEffect(() => {
         if (!newTask) return
@@ -76,14 +108,14 @@ export default function DailyTasks() {
         // <section className="w-full h-full max-h-full overflow-hidden flex flex-col gap-3 justify-between">
         //     <motion.ul className="w-full h-full flex flex-col gap-5 overflow-y-scroll scrollbar-floating "
 
-        <section className="w-full h-full max-h-full flex flex-col gap-3 justify-between">
+        <section className="w-full h-full max-h-full flex flex-col gap-3 justify-between py-5">
             <motion.ul className="w-full h-full flex flex-col gap-5"
                 variants={variants}
                 initial="hidden"
                 animate="visible"
             >
                 <span className="text-3xl font-bold">Today's Tasks</span>
-                
+
                 {groupedTasks.map((group) => (
                     <motion.li key={group.time} className="flex flex-col gap-2"
                         variants={childVariants}
@@ -113,7 +145,41 @@ export default function DailyTasks() {
                                             <div className="flex flex-col w-full">
                                                 <div className="flex w-full justify-between items-center">
                                                     <span className="text-sm font-medium">{task.title}</span>
-                                                    <Badge variant={"outline"} className="text-xs">{task.duration}</Badge>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge variant={"outline"} className="text-xs">{task.duration}</Badge>
+
+                                                        {task.completed && getCompletionDate(task, selectedDay) && (
+                                                            <Badge variant={"outline"} className="text-xs border-green-500">Completed</Badge>
+                                                        )}
+
+                                                        <Popover>
+                                                            <PopoverTrigger onClick={(e) => e.stopPropagation()} className="hover:bg-accent p-0.5 rounded-md cursor-pointer">
+                                                                <EllipsisVerticalIcon />
+                                                            </PopoverTrigger>
+
+                                                            <PopoverContent className="flex flex-col w-32 gap-3">
+                                                                <Button
+                                                                    variant={"outline"}
+                                                                    className="bg-transparent"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        user && markTaskAsCompleted(user?.id, task.id);
+                                                                        updateTaskToCompleted(task.id);
+                                                                    }}
+                                                                >
+                                                                    Completed
+                                                                </Button>
+
+                                                                <Button
+                                                                    className="bg-red-500"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    Delete
+                                                                </Button>
+                                                            </PopoverContent>
+                                                        </Popover>
+                                                    </div>
                                                 </div>
 
                                                 <p className="text-sm text-muted-foreground">{task.description}</p>

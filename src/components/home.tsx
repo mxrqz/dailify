@@ -9,30 +9,30 @@ import { getTasksForMonth } from "@/functions/firebase";
 import { isSameMonth } from "date-fns";
 
 export default function Home() {
-    const { selectedDay, isCalendar, setTasks, setIsLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
-    const { user } = useUser()
+    const { selectedDay, isCalendar } = useDailify()
+    // const { user } = useUser()
 
-    const getTasks = async () => {
-        if (!user) return
-        const tasks = await getTasksForMonth(user.id, selectedDay)
-        setTasks(tasks)
-        setIsLoading(false)
-    }
+    // const getTasks = async () => {
+    //     if (!user) return
+    //     const tasks = await getTasksForMonth(user.id, selectedDay)
+    //     setTasks(tasks)
+    //     setIsLoading(false)
+    // }
 
-    useEffect(() => {
-        if (!currentMonth) {
-            setCurrentMonth(selectedDay)
-            getTasks()
-        }
+    // useEffect(() => {
+    //     if (!currentMonth) {
+    //         setCurrentMonth(selectedDay)
+    //         getTasks()
+    //     }
 
-        if (currentMonth && !isSameMonth(currentMonth, selectedDay)) {
-            setCurrentMonth(selectedDay)
-            getTasks()
-        }
-    }, [selectedDay, newTask])
+    //     if (currentMonth && !isSameMonth(currentMonth, selectedDay)) {
+    //         setCurrentMonth(selectedDay)
+    //         getTasks()
+    //     }
+    // }, [selectedDay, newTask])
 
     return (
-        <main className="h-full max-h-full flex flex-col gap-5 py-5 px-[clamp(1rem,5vw,6rem)] relative" id="main">
+        <main className="h-full flex flex-col gap-5 py-5 px-[clamp(1rem,5vw,6rem)] relative" id="main">
             <Header />
 
             {!isCalendar ? (

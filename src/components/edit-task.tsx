@@ -40,7 +40,7 @@ export function useEditTask() {
 
 export function EditTaskTrigger({ children }: { children: ReactNode }) {
     return (
-        <SheetTrigger>{children}</SheetTrigger>
+        <SheetTrigger asChild>{children}</SheetTrigger>
     );
 }
 

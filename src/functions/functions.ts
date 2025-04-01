@@ -22,7 +22,7 @@ export function getTime(time: Timestamp | Date, format: "{hours, minutes}" | "HH
     };
 
     return "";
-}
+};
 
 export const getTasksByDate = (tasks: any, year: number, month: number, day: number) => {
     const yearStr = year.toString()
@@ -30,7 +30,7 @@ export const getTasksByDate = (tasks: any, year: number, month: number, day: num
     const dayStr = day.toString().padStart(2, "0")
 
     return tasks?.[yearStr]?.[monthStr]?.[dayStr] || {}
-}
+};
 
 export const formatDateByLocale = (date: Date, locale: string) => {
     const dateLocale = locale.startsWith("pt") ? ptBR : enUS;

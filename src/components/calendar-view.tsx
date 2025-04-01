@@ -69,10 +69,16 @@ export function CalendarView() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex gap-5">
           <NewTask />
 
-          <Button variant={"outline"} size={"icon"} id="calendar" onClick={() => setIsCalendar(!isCalendar)}>
+          <Button
+            // className="shrink-0"
+            variant={"outline"}
+            size={"icon"}
+            id="calendar"
+            onClick={() => setIsCalendar(!isCalendar)}
+          >
             <Calendar1Icon />
           </Button>
         </div>
@@ -103,12 +109,12 @@ export function CalendarView() {
               const now = new Date();
               const nowMinutes = now.getHours() * 60 + now.getMinutes();
               const targetMinutes = hours * 60 + minutes;
-          
+
               return nowMinutes > targetMinutes;
             }
 
             if (!todayTasks) return;
-            
+
             const groupedTasks = Object.values(
               todayTasks.reduce((acc, task) => {
                 const time = getTime(task.date, "HH:MM")
@@ -125,7 +131,7 @@ export function CalendarView() {
               return timeA[0] - timeB[0] || timeA[1] - timeB[1];
             });
             return (
-              <Sheet>
+              <Sheet key={index}>
                 <SheetTrigger className="w-full h-full">
                   <li key={index}
                     className={`border w-full h-full rounded-md p-2 flex flex-col

@@ -18,7 +18,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useDailify } from "./dailifyContext";
 
 export default function NewTask() {
-    const { selectedDay, setNewTask } = useDailify()
+    const { selectedDay, setNewTask, isCalendar } = useDailify()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -60,13 +60,13 @@ export default function NewTask() {
 
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                <Button
+            <DialogTrigger className={`${isCalendar ? "size-9" : 'w-full'} h-full bg-primary rounded-md flex items-center justify-center`}>
+                {/* <Button
                     size={"icon"}
-                    className="w-full flex h-full"
-                >
+                    className={`${isCalendar ? "" : 'w-full'} h-full`}
+                > */}
                     <PlusIcon />
-                </Button>
+                {/* </Button> */}
             </DialogTrigger>
 
             <DialogContent className="max-h-[calc(100%-2rem)] overflow-hidden flex flex-col">

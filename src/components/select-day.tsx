@@ -8,36 +8,50 @@ import NewTask from "./new-task";
 import { TaskProps } from "@/types/types";
 import { Timestamp } from "firebase/firestore";
 
-function getNextTask(tasks: TaskProps[], selectedDay: Date): TaskProps | undefined {
-    const todayTasks = tasks
-        .filter(task => {
-            const taskDate = (task.date as Timestamp).toDate();
-            return taskDate.toDateString() === selectedDay.toDateString();
-        })
-        .sort((a, b) => {
-            const aDate = (a.date as Timestamp).toDate().getTime();
-            const bDate = (b.date as Timestamp).toDate().getTime();
-            return aDate - bDate;
-        });
+// function getNextTask(tasks: TaskProps[], selectedDay: Date): TaskProps | undefined {
+//     const todayTasks = tasks
+//         .filter(task => {
+//             const taskDate = (task.date as Timestamp).toDate();
+//             return taskDate.toDateString() === selectedDay.toDateString();
+//         })
+//         .sort((a, b) => {
+//             const aDate = (a.date as Timestamp).toDate().getTime();
+//             const bDate = (b.date as Timestamp).toDate().getTime();
+//             return aDate - bDate;
+//         });
 
-    const now = new Date();
+//     const now = new Date();
+
+//     const nextTask = todayTasks.find(task => {
+//         const taskTime = (task.date as Timestamp).toDate().getTime();
+//         return taskTime > now.getTime()
+//     })
+
+//     return nextTask
+// }
+
+function getNextTask(tasks: TaskProps[], selectedDay: Date) {
+    const now = new Date()
+    const todayTasks = tasks?.filter(task => (task.date as Timestamp).toDate().getDate() === selectedDay.getDate())
 
     const nextTask = todayTasks.find(task => {
-        const taskTime = (task.date as Timestamp).toDate().getTime();
-        return taskTime > now.getTime()
+        const taskTime = format((task.date as Timestamp).toDate(), "hhmm");
+        return Number(taskTime) > Number(format(now, 'hhmm'))
     })
 
     return nextTask
 }
+
 
 export default function SelectDay() {
     const { setSelectedDay, selectedDay, tasks, setIsCalendar, isCalendar } = useDailify()
     const [nextTask, setNextTask] = useState<TaskProps>()
 
     useEffect(() => {
-        if (!tasks) return
-        const task = getNextTask(tasks, selectedDay)
-        setNextTask(task)
+        if (tasks) {
+            const task = getNextTask(tasks, selectedDay)
+            setNextTask(task)
+        }
     }, [tasks])
 
     return (

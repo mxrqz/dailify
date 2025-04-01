@@ -4,7 +4,7 @@ export interface TaskProps {
     id: string;
     title: string;
     description: string;
-    completed: boolean;
+    completed: Date[] | Timestamp[];
     duration: string,
     priority: number,
     repeat: string | { Weekly: string[] | undefined },

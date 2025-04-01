@@ -1,8 +1,7 @@
 import { TaskProps } from "@/types/types";
 import { initializeApp } from "firebase/app";
-import { arrayUnion, collection, doc, getDoc, getDocs, getFirestore, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
-import { startOfDay, endOfDay, startOfMonth, endOfMonth, eachDayOfInterval, format } from "date-fns";
-import { weekDays } from "@/conts/conts";
+import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import { startOfMonth, endOfMonth, eachDayOfInterval, format } from "date-fns";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjb63TKK_8X-FLpTMNrogEyTn_LZbyLX0",
@@ -58,96 +57,109 @@ export async function saveEditedTask(userId: string, taskData: TaskProps) {
     updateDoc(docToUpdate, { ...taskData })
 }
 
+export async function markTaskAsCompleted(userId: string, taskId: string) {
+    const now = new Date()
+    const docToUpdate = doc(db, "users", userId, "tasks", taskId);
+    updateDoc(docToUpdate, {
+        completed: arrayUnion(now)
+    });
+}
+
+export async function deleteTask(userId: string, taskId: string) {
+    const docToDelete = doc(db, "users", userId, "tasks", taskId);
+    await deleteDoc(docToDelete);
+}
+
 // código antigo que ta dando mto problema e ta mto complexo cheio de erros
 
-export async function getTasksForDay(userId: string, selectedDate: Date) {
-    const tasks = await getDayTasks(selectedDate, userId);
-    const repeatTasks = await getRepeatTasks(userId, selectedDate);
+// export async function getTasksForDay(userId: string, selectedDate: Date) {
+//     const tasks = await getDayTasks(selectedDate, userId);
+//     const repeatTasks = await getRepeatTasks(userId, selectedDate);
 
-    if (repeatTasks) {
-        const unidedTasks = Array.from(
-            new Map(
-                [...tasks, ...repeatTasks]
-                    .filter((task): task is TaskProps => task !== null && task !== undefined && task.id !== null && task.id !== undefined)
-                    .map(task => [task.id!, task])
-            ).values()
-        );
-        return unidedTasks
-    }
+//     if (repeatTasks) {
+//         const unidedTasks = Array.from(
+//             new Map(
+//                 [...tasks, ...repeatTasks]
+//                     .filter((task): task is TaskProps => task !== null && task !== undefined && task.id !== null && task.id !== undefined)
+//                     .map(task => [task.id!, task])
+//             ).values()
+//         );
+//         return unidedTasks
+//     }
 
 
-    return tasks
-}
+//     return tasks
+// }
 
-export async function getDayTasks(date: Date, userId: string) {
-    const start = startOfDay(date);
-    const end = endOfDay(date);
+// export async function getDayTasks(date: Date, userId: string) {
+//     const start = startOfDay(date);
+//     const end = endOfDay(date);
 
-    const q = query(collection(db, "users", userId, "tasks"),
-        where("date", ">=", start),
-        where("date", "<=", end)
-    );
+//     const q = query(collection(db, "users", userId, "tasks"),
+//         where("date", ">=", start),
+//         where("date", "<=", end)
+//     );
 
-    let tasks: TaskProps[] = []
+//     let tasks: TaskProps[] = []
 
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        tasks.push(doc.data() as TaskProps)
-    })
+//     const querySnapshot = await getDocs(q);
+//     querySnapshot.forEach((doc) => {
+//         tasks.push(doc.data() as TaskProps)
+//     })
 
-    return tasks
-}
+//     return tasks
+// }
 
-async function getRepeatTasks(userId: string, selectedDate: Date) {
-    const repeatTasksDocRef = collection(db, "users", userId, "repeatTasks");
-    const repeatTasksDocs = await getDocs(repeatTasksDocRef);
+// async function getRepeatTasks(userId: string, selectedDate: Date) {
+//     const repeatTasksDocRef = collection(db, "users", userId, "repeatTasks");
+//     const repeatTasksDocs = await getDocs(repeatTasksDocRef);
 
-    let taskIds: string[] = [];
+//     let taskIds: string[] = [];
 
-    repeatTasksDocs.forEach(doc => {
-        if (!doc.exists()) return;
+//     repeatTasksDocs.forEach(doc => {
+//         if (!doc.exists()) return;
 
-        const id = doc.data().id;
-        taskIds.push(...id)
-    });
+//         const id = doc.data().id;
+//         taskIds.push(...id)
+//     });
 
-    return getTaskByIds(userId, taskIds, selectedDate);
-}
+//     return getTaskByIds(userId, taskIds, selectedDate);
+// }
 
-export async function getTaskByIds(userId: string, taskId: string[], selectedDate: Date): Promise<TaskProps[] | null> {
-    if (taskId.length === 0) return null;
+// export async function getTaskByIds(userId: string, taskId: string[], selectedDate: Date): Promise<TaskProps[] | null> {
+//     if (taskId.length === 0) return null;
 
-    const q = query(collection(db, "users", userId, "tasks"))
-    // , where("id", "==", taskId));
-    const querySnapshot = await getDocs(q);
+//     const q = query(collection(db, "users", userId, "tasks"))
+//     // , where("id", "==", taskId));
+//     const querySnapshot = await getDocs(q);
 
-    let tasks: TaskProps[] = [];
-    querySnapshot.forEach(doc => {
-        const data = doc.data() as TaskProps
-        if (!taskId.includes(data.id))
+//     let tasks: TaskProps[] = [];
+//     querySnapshot.forEach(doc => {
+//         const data = doc.data() as TaskProps
+//         if (!taskId.includes(data.id))
 
-            if (typeof data.repeat === "string" && data.repeat === "Daily") {
-                tasks.push(data)
-            } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
-                const repeatDays = Object.values(data.repeat)[0]
-                const selectedDay = weekDays[selectedDate.getDay()]
-                if (repeatDays?.includes(selectedDay)) {
-                    tasks.push(data)
-                }
-            } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
-                const selecteDay = selectedDate.getDate()
-                const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
-                if (selecteDay === taskDate) {
-                    tasks.push(data)
-                }
-            }
-        // if (data.date === format(selectedDate, "PPP")) {
-        //     tasks.push(data)
-        // }
-    });
+//             if (typeof data.repeat === "string" && data.repeat === "Daily") {
+//                 tasks.push(data)
+//             } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
+//                 const repeatDays = Object.values(data.repeat)[0]
+//                 const selectedDay = weekDays[selectedDate.getDay()]
+//                 if (repeatDays?.includes(selectedDay)) {
+//                     tasks.push(data)
+//                 }
+//             } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
+//                 const selecteDay = selectedDate.getDate()
+//                 const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
+//                 if (selecteDay === taskDate) {
+//                     tasks.push(data)
+//                 }
+//             }
+//         // if (data.date === format(selectedDate, "PPP")) {
+//         //     tasks.push(data)
+//         // }
+//     });
 
-    return tasks;
-}
+//     return tasks;
+// }
 
 
 
