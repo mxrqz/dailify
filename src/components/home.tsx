@@ -3,10 +3,10 @@ import SelectDay from "./select-day";
 import DailyTasks from "./daily-tasks";
 import { useDailify } from "./dailifyContext";
 import { CalendarView } from "./calendar-view";
-import { useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
-import { getTasksForMonth } from "@/functions/firebase";
-import { isSameMonth } from "date-fns";
+// import { useEffect } from "react";
+// import { useUser } from "@clerk/clerk-react";
+// import { getTasksForMonth } from "@/functions/firebase";
+// import { isSameMonth } from "date-fns";
 
 export default function Home() {
     const { selectedDay, isCalendar } = useDailify()
