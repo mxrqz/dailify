@@ -43,7 +43,7 @@ export default function NewTask() {
             id: id,
             title,
             description: desc,
-            completed: false,
+            completed: [],
             duration: selectedDuration,
             tags: tags,
             priority,

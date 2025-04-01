@@ -22,7 +22,6 @@ interface EditTaskProps {
 const EditTaskContext = createContext<EditTaskProps | undefined>(undefined);
 
 export function EditTask({ children }: { children: ReactNode }) {
-
     return (
         <EditTaskContext.Provider value={{}}>
             <Sheet>{children}</Sheet>
@@ -70,7 +69,7 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
             id,
             description: desc,
             title,
-            completed: false,
+            completed: [],
             duration: selectedDuration,
             tags: tags,
             priority,
