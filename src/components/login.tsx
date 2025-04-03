@@ -10,13 +10,18 @@ import { useAuth, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 import { EmailLinkFactor } from '@clerk/types';
 import { ClerkAPIError, OAuthStrategy } from '@clerk/types';
 import VerifyingLink from "./verifying-link";
-import { isClerkAPIResponseError } from '@clerk/clerk-react/errors'
+import { isClerkAPIResponseError } from '@clerk/clerk-react/errors';
+import { useLocation } from "react-router-dom";
 
 export default function Login() {
     const { signOut } = useAuth()
     const { signIn, isLoaded } = useSignIn()
     const { signUp } = useSignUp()
     const { isSignedIn } = useUser()
+
+    const location = useLocation()
+    const from = (location.state as any)?.from?.pathname + (location.state as any)?.from?.search || "/";
+    console.log(from)
 
     const [verifying, setVerifying] = useState(false)
     const [email, setEmail] = useState<string>("")
@@ -28,7 +33,7 @@ export default function Login() {
             .authenticateWithRedirect({
                 strategy,
                 redirectUrl: '/login/sso-callback',
-                redirectUrlComplete: '/',
+                redirectUrlComplete: from,
             })
             .then((res) => {
                 console.log(res)
@@ -120,7 +125,7 @@ export default function Login() {
             });
 
             if (signInAttempt.firstFactorVerification.status === "verified") {
-                window.location.href = "/";
+                window.location.href = from;
             } else if (signInAttempt.firstFactorVerification.status === "expired") {
                 console.log("The email link has expired.");
             }

@@ -14,8 +14,7 @@ import { useDailify } from "./dailifyContext";
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { markTaskAsCompleted } from "@/functions/firebase";
-import { useUser } from "@clerk/clerk-react";
+// import { useUser } from "@clerk/clerk-react";
 
 function getCompletionDate(task: TaskProps, selectedDay: Date) {
     if (!Array.isArray(task.completed)) return
@@ -28,15 +27,15 @@ function getCompletionDate(task: TaskProps, selectedDay: Date) {
 export default function DailyTasks() {
     const { selectedDay, newTask, tasks, setTasks, isCalendar } = useDailify()
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
-    const { user } = useUser()
+    // const { user } = useUser()
 
     const updateTaskToCompleted = (taskId: string) => {
         const now = new Date()
+
         const updatedTasks = tasks?.map(task => {
             if (task.id !== taskId) return task;
-
+            const completed = task.completed ?? [];
             const isTimestamp = task.date instanceof Timestamp;
-            const completed = task.completed ?? []; // ← garante que completed seja sempre um array
 
             return {
                 ...task,
@@ -45,6 +44,7 @@ export default function DailyTasks() {
                     : [...(completed as Date[]), now],
             };
         });
+
         if (!updatedTasks) return;
         setTasks(updatedTasks);
     }
@@ -164,7 +164,7 @@ export default function DailyTasks() {
                                                                     className="bg-transparent"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
-                                                                        user && markTaskAsCompleted(user?.id, task.id);
+                                                                        // user && markTaskAsCompleted(user?.id, task.id);
                                                                         updateTaskToCompleted(task.id);
                                                                     }}
                                                                 >

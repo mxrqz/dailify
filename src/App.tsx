@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/protected-route";
 import SSOCallback from "./components/sso-callback";
 import Verify from "./components/verify";
 import { DailifyProvider } from "./components/dailifyContext";
+import ProfilePage from "./components/profile";
 
 export default function App() {
   return (
@@ -26,6 +27,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />

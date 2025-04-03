@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
 import { useDailify } from "./dailifyContext";
 import { getTasksForMonth } from "@/functions/firebase";
@@ -8,7 +8,8 @@ import { isSameMonth } from "date-fns";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isSignedIn, isLoaded, user } = useUser()
-    const { selectedDay, setTasks,  setIsLoading, isLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
+    const { selectedDay, setTasks, setIsLoading, isLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
+    const location = useLocation();
 
     const getTasks = async () => {
         setIsLoading(true)
@@ -39,8 +40,10 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     }
 
     if (!isSignedIn && isLoaded) {
-        return <Navigate to="/login" replace />
+        return <Navigate to={'/login'} replace state={{ from: location }} />
     }
 
-    return <>{children}</>
+    if (isLoaded && !isLoading) {
+        return <>{children}</>
+    }
 }
