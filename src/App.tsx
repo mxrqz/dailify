@@ -8,45 +8,69 @@ import SSOCallback from "./components/sso-callback";
 import Verify from "./components/verify";
 import { DailifyProvider } from "./components/dailifyContext";
 import ProfilePage from "./components/profile";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 export default function App() {
+
   return (
-    <DailifyProvider>
-      <Router>
-        <ThemeProvider>
-          <Routes>
-            <Route path="/"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
+    <HelmetProvider>
+      <DailifyProvider>
+        <Router>
+          <ThemeProvider>
+            <Routes>
+              <Route path="/"
+                element={
+                  <ProtectedRoute>
+                    <Helmet>
+                      <title>Dailify - Dashboard</title>
+                    </Helmet>
 
-            <Route path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
+                    <Home />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
+              <Route path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Helmet>
+                      <title>Dailify - Dashboard</title>
+                    </Helmet>
 
-            <Route path="/login" element={<Login />} />
+                    <Home />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route path="/login/sso-callback" element={<SSOCallback />} />
+              <Route path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Helmet>
+                      <title>Dailify - Profile</title>
+                    </Helmet>
 
-            <Route path="/sign-in/verify" element={<Verify />} />
-          </Routes>
-        </ThemeProvider>
-      </Router>
-    </DailifyProvider>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route path="/login" element={
+                <>
+                  <Helmet>
+                    <title>Dailify - Login</title>
+                  </Helmet>
+
+                  <Login />
+                </>
+              } />
+
+              <Route path="/login/sso-callback" element={<SSOCallback />} />
+
+              <Route path="/sign-in/verify" element={<Verify />} />
+            </Routes>
+          </ThemeProvider>
+        </Router>
+      </DailifyProvider>
+    </HelmetProvider>
   );
 }

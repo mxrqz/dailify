@@ -97,7 +97,7 @@ export function CalendarView() {
           <Loader2Icon className="size-12 animate-spin" />
         </div>
       ) : (
-        <ul className="grid grid-cols-7 grid-rows-6 gap-1 w-full justify-items-center h-full">
+        <ul className={`grid grid-cols-7 gap-1 w-full justify-items-center h-full`}>
           {calendarDays.map((day, index) => {
             const isCurrentMonth = isSameMonth(day, selectedDay)
             const isCurrentDay = isToday(day)
@@ -144,12 +144,12 @@ export function CalendarView() {
                       {format(day, "d")}
                     </span>
 
-                    <ul className="flex xl:flex-col w-full gap-1 overflow-hidden">
+                    <ul className="flex md:flex-col gap-1 overflow-hidden">
                       {isCurrentMonth && (
                         todayTasks?.slice(0, 3).map((task, index) => (
-                          <li key={index} className={`w-full text-xs flex items-center gap-1 xl:border rounded-md xl:px-1`}>
+                          <li key={index} className={`text-xs flex items-center gap-1 md:border rounded-md md:px-1`}>
                             <div className={`size-2 rounded-full shrink-0 ${paletteColors[index]}`} />
-                            <span className="truncate hidden xl:flex">{task.title}</span>
+                            <span className="truncate hidden md:flex">{task.title}</span>
                           </li>
                         ))
                       )}

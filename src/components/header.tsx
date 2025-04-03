@@ -1,18 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
-import { LogOutIcon, SettingsIcon } from "lucide-react";
+import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import React from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
-import ProfileConfig from "./profile-config";
+import { useNavigate } from "react-router-dom";
 
 const Header = React.memo(() => {
     const { user } = useUser()
     const { signOut } = useAuth()
+    const navigate = useNavigate()
 
     return (
         <header className="sticky top-0 h-24 py-3 inline-flex justify-between items-center w-full bg-background/70 backdrop-blur z-10">
-            <h1 className="font-bold text-2xl">Dailify</h1>
+            <h1 className="font-bold text-2xl cursor-pointer" onClick={() => navigate('/')}>Dailify</h1>
 
             <div className="inline-flex gap-2 items-center">
 
@@ -27,8 +28,9 @@ const Header = React.memo(() => {
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" >
-                        <DropdownMenuItem asChild>
-                            <ProfileConfig />
+                        <DropdownMenuItem onClick={(e) => {e.preventDefault; navigate('/profile')}}>
+                            <UserIcon />
+                            <span>Profile</span>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={(e) => e.preventDefault()}>

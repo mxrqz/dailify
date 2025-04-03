@@ -25,7 +25,7 @@ import { Command, CommandEmpty, CommandInput, CommandItem, CommandList, CommandG
 import { cn } from "@/lib/utils"
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./ui/input-otp"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
-import { useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 countriesLib.registerLocale(enLocale);
 const countries = getCountries().map(code => ({
@@ -47,6 +47,7 @@ export default function ProfilePage() {
     const [searchParams] = useSearchParams()
     const [phoneDialogOpen, setPhoneDialogOpen] = useState(false);
     const [phoneFromUrl, setPhoneFromUrl] = useState<PhoneNumber>()
+    const navigate = useNavigate()
 
     // useEffect(() => {
     //     const phoneFromUrl = searchParams.get("addPhone");
@@ -184,19 +185,15 @@ export default function ProfilePage() {
         setIsLoading(false)
     }
 
-    // console.log(user?.primaryPhoneNumber?.phoneNumber)
-
     return (
-        <main className="w-full px-[clamp(1rem,5vw,6rem)] flex flex-col">
+        <main className="w-full h-full px-[clamp(1rem,5vw,6rem)] flex flex-col scrollbar-floating">
             <Header />
 
             <div className="w-full flex flex-col justify-center py-6 space-y-6">
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" asChild>
-                        <a href="/">
-                            <ChevronLeft className="h-4 w-4" />
-                            <span className="sr-only">Back</span>
-                        </a>
+                    <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+                        <ChevronLeft className="h-4 w-4" />
+                        <span className="sr-only">Back</span>
                     </Button>
                     <h1 className="text-2xl font-bold">Profile</h1>
                 </div>
