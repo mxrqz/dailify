@@ -21,13 +21,14 @@ export default function Login() {
 
     const location = useLocation()
     const from = (location.state as any)?.from?.pathname + (location.state as any)?.from?.search || "/";
-    console.log(from)
 
     const [verifying, setVerifying] = useState(false)
     const [email, setEmail] = useState<string>("")
 
+    // testando ainda pra ver se vai funcionar 
+
     const signInWith = (strategy: OAuthStrategy) => {
-        if (!signIn) return null
+        if (!signIn) return null;
 
         return signIn
             .authenticateWithRedirect({
@@ -35,63 +36,15 @@ export default function Login() {
                 redirectUrl: '/login/sso-callback',
                 redirectUrlComplete: from,
             })
-            .then((res) => {
-                console.log(res)
+            .then(async (res) => {
+                // await getFirebaseToken();
+                console.log(res);
             })
             .catch((err: ClerkAPIError) => {
-                console.log(err.message)
-                console.error(err, null, 2)
-            })
-    }
-
-    const handleAction = (action: string) => {
-        if (action === 'back') {
-            setVerifying(false)
-            setEmail("")
-        }
-    }
-
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-    //     if (!signIn || !isLoaded) return;
-
-    //     setVerifying(true);
-
-    //     const formData = new FormData(e.currentTarget);
-    //     const emailAddress = formData.get("email") as string;
-    //     setEmail(emailAddress);
-
-    //     try {
-    //         const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
-
-    //         const emailLinkFactor = supportedFirstFactors?.find(
-    //             (factor): factor is EmailLinkFactor => factor.strategy === "email_link"
-    //         );
-
-    //         if (!emailLinkFactor) {
-    //             console.log("Email link factor not found");
-    //             return;
-    //         }
-
-    //         // futuramente mudar para uma url fixa, no caso um dominio fixo
-    //         const url = "https://dailify.mxrqz.com" // window.location.origin
-    //         const redirectUrl = `${url}/sign-in/verify`;
-    //         const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
-    //             emailAddressId: emailLinkFactor.emailAddressId,
-    //             redirectUrl,
-    //         });
-
-    //         if (signInAttempt.firstFactorVerification.status === "verified") {
-    //             window.location.href = "/"
-    //         } else if (signInAttempt.firstFactorVerification.status === "expired") {
-    //             console.log("The email link has expired.");
-    //         }
-    //     } catch (err: any) {
-    //         console.error("Error:", err);
-    //     } finally {
-    //         setVerifying(false);
-    //     }
-    // };
+                console.log(err.message);
+                console.error(err, null, 2);
+            });
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -102,7 +55,7 @@ export default function Login() {
         const formData = new FormData(e.currentTarget);
         const emailAddress = formData.get("email") as string;
         setEmail(emailAddress);
-        const { startEmailLinkFlow } = signUp.createEmailLinkFlow()
+        const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
 
         const url = "https://dailify.mxrqz.com";
         const redirectUrl = `${url}/sign-in/verify`;
@@ -125,25 +78,23 @@ export default function Login() {
             });
 
             if (signInAttempt.firstFactorVerification.status === "verified") {
+                // const token = await getFirebaseToken();
                 window.location.href = from;
             } else if (signInAttempt.firstFactorVerification.status === "expired") {
                 console.log("The email link has expired.");
             }
-
         } catch (err) {
             if (isClerkAPIResponseError(err)) {
                 if (err.errors[0].code === "form_identifier_not_found") {
                     await signUp.create({
                         emailAddress,
-                    })
+                    });
 
                     const signUpAttempt = await startEmailLinkFlow({
                         redirectUrl,
-                    })
+                    });
 
-                    const verification = signUpAttempt.verifications.emailAddress
-
-                    console.log(verification.status)
+                    const verification = signUpAttempt.verifications.emailAddress;
 
                     if (verification.status === 'verified') {
                         window.location.href = "/";
@@ -157,6 +108,93 @@ export default function Login() {
         }
     };
 
+    // --- teste acaba aq ---
+
+    // const signInWith = (strategy: OAuthStrategy) => {
+    //     if (!signIn) return null
+
+    //     return signIn
+    //         .authenticateWithRedirect({
+    //             strategy,
+    //             redirectUrl: '/login/sso-callback',
+    //             redirectUrlComplete: from,
+    //         })
+    //         .then((res) => {
+    //             console.log(res)
+    //         })
+    //         .catch((err: ClerkAPIError) => {
+    //             console.log(err.message)
+    //             console.error(err, null, 2)
+    //         })
+    // };
+
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     if (!isLoaded || !signUp) return;
+
+    //     setVerifying(true);
+
+    //     const formData = new FormData(e.currentTarget);
+    //     const emailAddress = formData.get("email") as string;
+    //     setEmail(emailAddress);
+    //     const { startEmailLinkFlow } = signUp.createEmailLinkFlow()
+
+    //     const url = "https://dailify.mxrqz.com";
+    //     const redirectUrl = `${url}/sign-in/verify`;
+
+    //     try {
+    //         const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
+
+    //         const emailLinkFactor = supportedFirstFactors?.find(
+    //             (factor): factor is EmailLinkFactor => factor.strategy === "email_link"
+    //         );
+
+    //         if (!emailLinkFactor) {
+    //             console.log("Email link factor not found");
+    //             return;
+    //         }
+
+    //         const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
+    //             emailAddressId: emailLinkFactor.emailAddressId,
+    //             redirectUrl,
+    //         });
+
+    //         if (signInAttempt.firstFactorVerification.status === "verified") {
+    //             window.location.href = from;
+    //         } else if (signInAttempt.firstFactorVerification.status === "expired") {
+    //             console.log("The email link has expired.");
+    //         }
+    //     } catch (err) {
+    //         if (isClerkAPIResponseError(err)) {
+    //             if (err.errors[0].code === "form_identifier_not_found") {
+    //                 await signUp.create({
+    //                     emailAddress,
+    //                 })
+
+    //                 const signUpAttempt = await startEmailLinkFlow({
+    //                     redirectUrl,
+    //                 })
+
+    //                 const verification = signUpAttempt.verifications.emailAddress
+
+    //                 if (verification.status === 'verified') {
+    //                     window.location.href = "/";
+    //                 }
+    //             } else {
+    //                 console.error("Unexpected error:", err);
+    //             }
+    //         }
+    //     } finally {
+    //         setVerifying(false);
+    //     }
+    // };
+
+    const handleAction = (action: string) => {
+        if (action === 'back') {
+            setVerifying(false)
+            setEmail("")
+        }
+    }
 
     if (!isLoaded) {
         return (

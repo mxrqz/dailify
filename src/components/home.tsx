@@ -10,6 +10,7 @@ import { CalendarView } from "./calendar-view";
 
 export default function Home() {
     const { selectedDay, isCalendar } = useDailify()
+
     // const { user } = useUser()
 
     // const getTasks = async () => {

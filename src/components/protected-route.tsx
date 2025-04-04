@@ -1,19 +1,42 @@
-import { ReactNode, useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { ReactNode, useEffect, useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { Navigate, useLocation } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
 import { useDailify } from "./dailifyContext";
-import { getTasksForMonth } from "@/functions/firebase";
+import { auth, getTasksForMonth } from "@/functions/firebase";
 import { isSameMonth } from "date-fns";
+import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isSignedIn, isLoaded, user } = useUser()
     const { selectedDay, setTasks, setIsLoading, isLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
     const location = useLocation();
+    const { getToken, userId } = useAuth()
+    const [isFirebaseLogged, setIsFirebaseLogged] = useState<boolean>(false)
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                setIsFirebaseLogged(true);
+            } else if (userId) {
+                const token = await getToken({ template: 'integration_firebase' });
+                if (!token) return;
+
+                try {
+                    const creds = await signInWithCustomToken(auth, token);
+                    if (creds.user) setIsFirebaseLogged(true);
+                } catch (err) {
+                    console.error("Erro ao logar no Firebase:", err);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, [userId]);
 
     const getTasks = async () => {
         setIsLoading(true)
-        if (!user) return
+        if (!user || !isFirebaseLogged) return
         const tasks = await getTasksForMonth(user.id, selectedDay)
         setTasks(tasks)
         setIsLoading(false)
@@ -30,6 +53,12 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
             getTasks()
         }
     }, [selectedDay, newTask, isLoaded])
+
+    useEffect(() => {
+        if (isLoaded && isFirebaseLogged && user) {
+            getTasks()
+        }
+    }, [isFirebaseLogged, user, isLoaded])
 
     if (!isLoaded || isLoading) {
         return (

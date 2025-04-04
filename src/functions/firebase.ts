@@ -2,6 +2,7 @@ import { TaskProps } from "@/types/types";
 import { initializeApp } from "firebase/app";
 import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { startOfMonth, endOfMonth, eachDayOfInterval, format } from "date-fns";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjb63TKK_8X-FLpTMNrogEyTn_LZbyLX0",
@@ -13,8 +14,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
+const auth = getAuth(app)
+
+export { auth }
 
 export async function saveTask(userId: string, taskData: TaskProps) {
     await setDoc(doc(db, "users", userId, "tasks", taskData.id), taskData);
