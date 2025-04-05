@@ -139,26 +139,24 @@ export async function deleteTask(userId: string, taskId: string) {
 //     let tasks: TaskProps[] = [];
 //     querySnapshot.forEach(doc => {
 //         const data = doc.data() as TaskProps
-//         if (!taskId.includes(data.id))
+//         if (!taskId.includes(data.id)) return
 
-//             if (typeof data.repeat === "string" && data.repeat === "Daily") {
+//         if (typeof data.repeat === "string" && data.repeat === "Daily") {
+//             tasks.push(data)
+//         } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
+//             const repeatDays = Object.values(data.repeat)[0]
+//             const selectedDay = weekDays[selectedDate.getDay()]
+//             if (repeatDays?.includes(selectedDay)) {
 //                 tasks.push(data)
-//             } else if (typeof data.repeat === "object" && Object.keys(data.repeat)[0] === 'Weekly') {
-//                 const repeatDays = Object.values(data.repeat)[0]
-//                 const selectedDay = weekDays[selectedDate.getDay()]
-//                 if (repeatDays?.includes(selectedDay)) {
-//                     tasks.push(data)
-//                 }
-//             } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
-//                 const selecteDay = selectedDate.getDate()
-//                 const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
-//                 if (selecteDay === taskDate) {
-//                     tasks.push(data)
-//                 }
 //             }
-//         // if (data.date === format(selectedDate, "PPP")) {
-//         //     tasks.push(data)
-//         // }
+//         } else if (typeof data.repeat === "string" && data.repeat === "Monthly") {
+//             const selecteDay = selectedDate.getDate()
+//             const taskDate = data.date instanceof Timestamp && data.date.toDate().getDate()
+//             if (selecteDay === taskDate) {
+//                 tasks.push(data)
+//             }
+//         }
+
 //     });
 
 //     return tasks;

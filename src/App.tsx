@@ -9,6 +9,7 @@ import Verify from "./components/verify";
 import { DailifyProvider } from "./components/dailifyContext";
 import ProfilePage from "./components/profile";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import TaskPreview from "./components/[id]/taskPreview";
 
 export default function App() {
 
@@ -23,6 +24,7 @@ export default function App() {
                   <ProtectedRoute>
                     <Helmet>
                       <title>Dailify - Dashboard</title>
+                      
                     </Helmet>
 
                     <Home />
@@ -67,6 +69,9 @@ export default function App() {
               <Route path="/login/sso-callback" element={<SSOCallback />} />
 
               <Route path="/sign-in/verify" element={<Verify />} />
+
+              <Route path="/task/:id" element={<TaskPreview />} />
+
             </Routes>
           </ThemeProvider>
         </Router>

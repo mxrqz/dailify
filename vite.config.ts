@@ -27,6 +27,7 @@ export default defineConfig(async () => ({
     port: 1420,
     strictPort: true,
     host: host || false,
+    allowedHosts: ["ddc8-2804-317c-7314-800-e8b4-db4d-7589-22ca.ngrok-free.app"],
     hmr: host
       ? {
         protocol: "ws",
