@@ -2,8 +2,6 @@ import { format } from "date-fns"
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { toPng } from 'html-to-image'
-import { Card } from "../ui/card"
-import { CalendarCheckIcon } from "lucide-react"
 
 export default function TaskPreview() {
     const [searchParams] = useSearchParams()
