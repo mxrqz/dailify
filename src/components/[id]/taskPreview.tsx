@@ -2,6 +2,8 @@ import { format } from "date-fns"
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { toPng } from 'html-to-image'
+import { Card } from "../ui/card"
+import { CalendarCheckIcon } from "lucide-react"
 
 export default function TaskPreview() {
     const [searchParams] = useSearchParams()
@@ -40,7 +42,7 @@ export default function TaskPreview() {
     return (
         date && task && time && (
             <>
-                <div ref={mainRef} className="w-fit text-center flex flex-col gap-2 py-2 px-5 border rounded-md bg-white from-[#ff5e62] from-35% to-[#ff9966] text-black">
+                {/* <div ref={mainRef} className="w-fit text-center flex flex-col gap-2 py-2 px-5 border rounded-md bg-white from-[#ff5e62] from-35% to-[#ff9966] text-black">
                     <span className="font-semibold text-lg">🗓️ {format(date, 'EEEE, PPP')}</span>
 
                     <div className="h-[2px] w-full bg-black/10 rounded-full" />
@@ -48,6 +50,31 @@ export default function TaskPreview() {
                     <div className="w-full flex justify-between font-medium">
                         <span>{task}</span>
                         <span>{time}</span>
+                    </div>
+                </div> */}
+
+
+                <div ref={mainRef} className="flex w-fit gap-10 justify-between py-3 px-5 bg-gradient-to-br from-[#5a24d6] via-[#b92f84] via-50% to-[#fa652a] rounded-xl">
+                    <div className="flex flex-col gap-3">
+                        <div className="flex gap-2 items-center font-bold text-2xl">
+                            {/* <CalendarCheckIcon size={28} /> */}
+                            <img src="../calendar_logo_6.png" alt="Calendar" className="w-10 aspect-square" />
+                            <span>Tarefa Criada</span>
+                        </div>
+
+                        <div className="flex flex-col font-medium text-lg">
+                            <span>{format(date, 'PP')}</span>
+                            <span>{format(date, "p")}</span>
+                            <span>{task}</span>
+                        </div>
+                    </div>
+
+                    <div className="relative w-36 aspect-square">
+                        <img
+                            className="absolute w-full h-full object-contain -scale-x-100"
+                            src="../dailify_logo_2.png"
+                            alt="Dailify Logo"
+                        />
                     </div>
                 </div>
 
