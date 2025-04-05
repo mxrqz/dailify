@@ -52,8 +52,20 @@ export default function TaskPreview() {
                 </div> */}
 
 
-                <div ref={mainRef} className="flex w-fit gap-10 justify-between py-3 px-5 bg-gradient-to-br from-[#5a24d6] via-[#b92f84] via-50% to-[#fa652a] text-white rounded-xl">
-                    <div className="flex flex-col gap-3">
+                <div ref={mainRef} className="relative flex w-fit gap-10 justify-between py-3 px-5 bg-gradient-to-br from-[#5a24d6] via-[#b92f84] via-50% to-[#fa652a] text-white rounded-lg">
+                    <img
+                        className="absolute top-0 left-0 w-full h-full object-cover opacity-5 mix-blend-color-dodge"
+                        src="../topo_2.jpg"
+                        alt=""
+                    />
+
+                    <img
+                        className="absolute top-0 left-0 w-full h-full object-cover opacity-10 mix-blend-color-dodge invert"
+                        src="../halftone.jpg"
+                        alt=""
+                    />
+
+                    <div className="relative flex flex-col gap-3">
                         <div className="flex gap-2 items-center font-bold text-2xl">
                             {/* <CalendarCheckIcon size={28} /> */}
                             <img src="../calendar_logo_6.png" alt="Calendar" className="w-10 aspect-square" />
