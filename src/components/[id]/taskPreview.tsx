@@ -42,7 +42,7 @@ export default function TaskPreview() {
             <>
                 <div ref={mainRef} className="relative flex w-fit gap-10 justify-between py-3 px-5 bg-gradient-to-br from-[#5a24d6] via-[#b92f84] via-50% to-[#fa652a] text-white rounded-lg">
                     <img
-                        className="absolute top-0 left-0 w-full h-full object-cover opacity-5 mix-blend-color-dodge"
+                        className="absolute top-0 left-0 w-full h-full object-cover opacity-10 mix-blend-color-dodge"
                         src="../topo_2.jpg"
                         alt=""
                     />
