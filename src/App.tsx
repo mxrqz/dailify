@@ -1,15 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
 import "./global.css";
-import Home from "./components/home";
-import Login from "./components/login";
+import Home from "./pages/home";
+import Login from "./pages/login";
 import ProtectedRoute from "./components/protected-route";
 import SSOCallback from "./components/sso-callback";
 import Verify from "./components/verify";
 import { DailifyProvider } from "./components/dailifyContext";
-import ProfilePage from "./components/profile";
+import ProfilePage from "./pages/profile";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import TaskPreview from "./components/[id]/taskPreview";
+import LandingPage from "./pages/landingPage";
 
 export default function App() {
 
@@ -20,16 +21,7 @@ export default function App() {
           <ThemeProvider>
             <Routes>
               <Route path="/"
-                element={
-                  <ProtectedRoute>
-                    <Helmet>
-                      <title>Dailify - Dashboard</title>
-                      
-                    </Helmet>
-
-                    <Home />
-                  </ProtectedRoute>
-                }
+                element={ <LandingPage />}
               />
 
               <Route path="/dashboard"

@@ -112,7 +112,7 @@
   }
 
   body {
-    @apply bg-background text-foreground min-h-dvh;
+    @apply dark:bg-zinc-900 bg-zinc-100 text-foreground min-h-dvh;
   }
 }
 

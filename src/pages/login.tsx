@@ -1,15 +1,15 @@
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
-import { AppleLogo, GoogleLogo } from "./logos";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Separator } from "./ui/separator";
+import { AppleLogo, GoogleLogo } from "../components/logos";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Separator } from "../components/ui/separator";
 import { useState } from "react";
 import { useAuth, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 import { EmailLinkFactor } from '@clerk/types';
 import { ClerkAPIError, OAuthStrategy } from '@clerk/types';
-import VerifyingLink from "./verifying-link";
+import VerifyingLink from "../components/verifying-link";
 import { isClerkAPIResponseError } from '@clerk/clerk-react/errors';
 import { useLocation } from "react-router-dom";
 
@@ -20,12 +20,10 @@ export default function Login() {
     const { isSignedIn } = useUser()
 
     const location = useLocation()
-    const from = (location.state as any)?.from?.pathname + (location.state as any)?.from?.search || "/";
+    const from = (location.state as any)?.from?.pathname + (location.state as any)?.from?.search || "/dashboard";
 
     const [verifying, setVerifying] = useState(false)
     const [email, setEmail] = useState<string>("")
-
-    // testando ainda pra ver se vai funcionar 
 
     const signInWith = (strategy: OAuthStrategy) => {
         if (!signIn) return null;
@@ -108,87 +106,6 @@ export default function Login() {
         }
     };
 
-    // --- teste acaba aq ---
-
-    // const signInWith = (strategy: OAuthStrategy) => {
-    //     if (!signIn) return null
-
-    //     return signIn
-    //         .authenticateWithRedirect({
-    //             strategy,
-    //             redirectUrl: '/login/sso-callback',
-    //             redirectUrlComplete: from,
-    //         })
-    //         .then((res) => {
-    //             console.log(res)
-    //         })
-    //         .catch((err: ClerkAPIError) => {
-    //             console.log(err.message)
-    //             console.error(err, null, 2)
-    //         })
-    // };
-
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-    //     if (!isLoaded || !signUp) return;
-
-    //     setVerifying(true);
-
-    //     const formData = new FormData(e.currentTarget);
-    //     const emailAddress = formData.get("email") as string;
-    //     setEmail(emailAddress);
-    //     const { startEmailLinkFlow } = signUp.createEmailLinkFlow()
-
-    //     const url = "https://dailify.mxrqz.com";
-    //     const redirectUrl = `${url}/sign-in/verify`;
-
-    //     try {
-    //         const { supportedFirstFactors } = await signIn.create({ identifier: emailAddress });
-
-    //         const emailLinkFactor = supportedFirstFactors?.find(
-    //             (factor): factor is EmailLinkFactor => factor.strategy === "email_link"
-    //         );
-
-    //         if (!emailLinkFactor) {
-    //             console.log("Email link factor not found");
-    //             return;
-    //         }
-
-    //         const signInAttempt = await signIn.createEmailLinkFlow().startEmailLinkFlow({
-    //             emailAddressId: emailLinkFactor.emailAddressId,
-    //             redirectUrl,
-    //         });
-
-    //         if (signInAttempt.firstFactorVerification.status === "verified") {
-    //             window.location.href = from;
-    //         } else if (signInAttempt.firstFactorVerification.status === "expired") {
-    //             console.log("The email link has expired.");
-    //         }
-    //     } catch (err) {
-    //         if (isClerkAPIResponseError(err)) {
-    //             if (err.errors[0].code === "form_identifier_not_found") {
-    //                 await signUp.create({
-    //                     emailAddress,
-    //                 })
-
-    //                 const signUpAttempt = await startEmailLinkFlow({
-    //                     redirectUrl,
-    //                 })
-
-    //                 const verification = signUpAttempt.verifications.emailAddress
-
-    //                 if (verification.status === 'verified') {
-    //                     window.location.href = "/";
-    //                 }
-    //             } else {
-    //                 console.error("Unexpected error:", err);
-    //             }
-    //         }
-    //     } finally {
-    //         setVerifying(false);
-    //     }
-    // };
-
     const handleAction = (action: string) => {
         if (action === 'back') {
             setVerifying(false)
@@ -217,13 +134,13 @@ export default function Login() {
 
                     <CardContent className="flex flex-col gap-3">
                         <div className="w-full flex gap-3">
-                            <Button variant={"outline"} className="w-full flex-1" onClick={() => signInWith('oauth_apple')}>
-                                <AppleLogo className="fill-foreground" />
+                            <Button className="w-full flex-1 bg-foreground text-background cursor-pointer hover:bg-foreground/90" onClick={() => signInWith('oauth_apple')}>
+                                <AppleLogo className="fill-background" />
                                 Apple
                             </Button>
 
-                            <Button variant={"outline"} className="w-full flex-1" onClick={() => signInWith('oauth_google')}>
-                                <GoogleLogo className="fill-foreground" />
+                            <Button className="w-full flex-1 bg-foreground text-background cursor-pointer hover:bg-foreground/90" onClick={() => signInWith('oauth_google')}>
+                                <GoogleLogo className="fill-background" />
                                 Google
                             </Button>
                         </div>
@@ -241,7 +158,6 @@ export default function Login() {
                             </div>
 
                             <Button
-                                variant={"secondary"}
                                 className="hover:[&_svg]:translate-x-2 [&_svg]:transition-transform cursor-pointer"
                                 type="submit"
                             >

@@ -58,6 +58,9 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
         if (isLoaded && isFirebaseLogged && user) {
             getTasks()
         }
+
+        // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        // console.log(timezone)
     }, [isFirebaseLogged, user, isLoaded])
 
     if (!isLoaded || isLoading) {

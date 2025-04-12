@@ -11,19 +11,19 @@ import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import Header from "./header"
+import Header from "../components/header"
 import { useUser } from "@clerk/clerk-react"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
 import { FormDataValues } from "@/types/types"
 import { PhoneNumberResource } from '@clerk/types'
 import { E164Number, getCountries, getCountryCallingCode, parsePhoneNumberWithError, PhoneNumber } from 'libphonenumber-js'
 import * as countriesLib from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
 
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList, CommandGroup } from "./ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover"
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList, CommandGroup } from "../components/ui/command"
 import { cn } from "@/lib/utils"
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./ui/input-otp"
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../components/ui/input-otp"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { useNavigate, useSearchParams } from "react-router-dom"
 
@@ -191,7 +191,7 @@ export default function ProfilePage() {
 
             <div className="w-full flex flex-col justify-center py-6 space-y-6">
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+                    <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
                         <ChevronLeft className="h-4 w-4" />
                         <span className="sr-only">Back</span>
                     </Button>

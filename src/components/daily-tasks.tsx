@@ -7,27 +7,20 @@ import { Badge } from "./ui/badge";
 import { motion } from 'framer-motion';
 import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/conts/conts";
 import { Timestamp } from "firebase/firestore";
-import { getTime } from "@/functions/functions";
+import { getCompletionDate, getTime } from "@/functions/functions";
 import { format } from "date-fns";
 import { useDailify } from "./dailifyContext";
 
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-// import { useUser } from "@clerk/clerk-react";
-
-function getCompletionDate(task: TaskProps, selectedDay: Date) {
-    if (!Array.isArray(task.completed)) return
-    const taskCompletedDate = task.completed.map(taskDate => (taskDate as Timestamp).toDate())
-    const haveBeenCompletedToday = taskCompletedDate.find(taskDate => taskDate.getDate() === selectedDay.getDate()) ? true : false
-
-    return haveBeenCompletedToday
-}
+import { markTaskAsCompleted } from "@/functions/firebase";
+import { useUser } from "@clerk/clerk-react";
 
 export default function DailyTasks() {
     const { selectedDay, newTask, tasks, setTasks, isCalendar } = useDailify()
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
-    // const { user } = useUser()
+    const {user} = useUser()
 
     const updateTaskToCompleted = (taskId: string) => {
         const now = new Date()
@@ -76,15 +69,6 @@ export default function DailyTasks() {
         setDayTasks(todayTasks)
     }, [tasks, selectedDay, isCalendar])
 
-    // function isAfterTime(time: Timestamp | Date): boolean {
-    //     const { hours, minutes } = getTime(time, "{hours, minutes}")
-    //     const now = new Date();
-    //     const nowMinutes = now.getHours() * 60 + now.getMinutes();
-    //     const targetMinutes = hours * 60 + minutes;
-
-    //     return nowMinutes > targetMinutes;
-    // }
-
     if (!dayTasks) return
 
     const groupedTasks = Object.values(
@@ -104,10 +88,6 @@ export default function DailyTasks() {
     });
 
     return (
-
-        // <section className="w-full h-full max-h-full overflow-hidden flex flex-col gap-3 justify-between">
-        //     <motion.ul className="w-full h-full flex flex-col gap-5 overflow-y-scroll scrollbar-floating "
-
         <section className="w-full h-full max-h-full flex flex-col gap-3 justify-between py-5">
             <motion.ul className="w-full h-full flex flex-col gap-5"
                 variants={variants}
@@ -121,12 +101,12 @@ export default function DailyTasks() {
                         variants={childVariants}
                     >
                         <div className="flex items-center gap-2">
-                            <ClockIcon className="size-4 text-muted-foreground" />
-                            <span className="text-sm font-medium text-muted-foreground">{group.time}</span>
+                            <ClockIcon className="size-5 text-muted-foreground" />
+                            <span className="text-base font-medium text-muted-foreground">{group.time}</span>
                             <Separator className="shrink" />
                         </div>
 
-                        <motion.ul className="flex flex-col gap-2" role="list"
+                        <motion.ul className="flex flex-col gap-2 bg-background rounded-md border p-5 shadow" role="list"
                             variants={variants}
                             initial="hidden"
                             animate="visible"
@@ -135,22 +115,18 @@ export default function DailyTasks() {
                                 <EditTask key={index}>
                                     <EditTaskTrigger>
                                         <motion.li key={task.id}
-                                            className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer text-start
-                                                `
-                                                // ${task.completed && "border-green-500 bg-green-500/5"}
-                                                // ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}
-                                            }
+                                            className={`flex flex-col gap-3 w-full cursor-pointer text-start`}
                                             variants={childVariants}
                                         >
                                             <div className="flex flex-col w-full">
                                                 <div className="flex w-full justify-between items-center">
-                                                    <span className="text-sm font-medium">{task.title}</span>
+                                                    <span className="text-lg font-semibold">{task.title}</span>
 
                                                     <div className="flex items-center gap-2">
-                                                        <Badge variant={"outline"} className="text-xs">{task.duration}</Badge>
+                                                        <Badge variant={"outline"} className="">{task.duration}</Badge>
 
                                                         {task.completed && getCompletionDate(task, selectedDay) && (
-                                                            <Badge variant={"outline"} className="text-xs border-green-500">Completed</Badge>
+                                                            <Badge variant={"outline"} className="border-green-500">Completed</Badge>
                                                         )}
 
                                                         <Popover>
@@ -161,10 +137,10 @@ export default function DailyTasks() {
                                                             <PopoverContent className="flex flex-col w-32 gap-3">
                                                                 <Button
                                                                     variant={"outline"}
-                                                                    className="bg-transparent"
+                                                                    className="bg-transparent cursor-pointer"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
-                                                                        // user && markTaskAsCompleted(user?.id, task.id);
+                                                                        user && markTaskAsCompleted(user?.id, task.id);
                                                                         updateTaskToCompleted(task.id);
                                                                     }}
                                                                 >
@@ -172,7 +148,7 @@ export default function DailyTasks() {
                                                                 </Button>
 
                                                                 <Button
-                                                                    className="bg-red-500"
+                                                                    className="bg-red-500 cursor-pointer"
                                                                     onClick={(e) => e.stopPropagation()}
                                                                 >
                                                                     Delete
@@ -182,7 +158,7 @@ export default function DailyTasks() {
                                                     </div>
                                                 </div>
 
-                                                <p className="text-sm text-muted-foreground">{task.description}</p>
+                                                <p className="text-base font-medium text-muted-foreground">{task.description}</p>
                                             </div>
 
                                             <motion.ul className="w-full flex flex-wrap gap-1"
@@ -223,8 +199,6 @@ export default function DailyTasks() {
                     </motion.li>
                 ))}
             </motion.ul>
-
-            {/* <NewTask /> */}
         </section>
     )
 }

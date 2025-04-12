@@ -9,7 +9,7 @@ import { ptBR } from "date-fns/locale";
 import { useDailify } from "./dailifyContext";
 import { Timestamp } from "firebase/firestore";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
-import { getTime } from "@/functions/functions";
+import { getCompletionDate, getTime } from "@/functions/functions";
 import { TaskProps } from "@/types/types";
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 import { Badge } from "./ui/badge";
@@ -48,7 +48,7 @@ export function CalendarView() {
   const calendarDays = generateCalendarDays()
 
   return (
-    <motion.ul className="w-full h-full flex flex-col gap-3"
+    <motion.ul className="w-full h-full flex flex-col gap-3 pb-5"
       key="box"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -70,7 +70,7 @@ export function CalendarView() {
         </div>
 
         <div className="flex gap-5">
-          <NewTask />
+          <NewTask className="" />
 
           <Button
             // className="shrink-0"
@@ -104,14 +104,14 @@ export function CalendarView() {
 
             const todayTasks = tasks && getTasks(tasks, day)
 
-            function isAfterTime(time: Timestamp | Date): boolean {
-              const { hours, minutes } = getTime(time, "{hours, minutes}")
-              const now = new Date();
-              const nowMinutes = now.getHours() * 60 + now.getMinutes();
-              const targetMinutes = hours * 60 + minutes;
+            // function isAfterTime(time: Timestamp | Date): boolean {
+            //   const { hours, minutes } = getTime(time, "{hours, minutes}")
+            //   const now = new Date();
+            //   const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            //   const targetMinutes = hours * 60 + minutes;
 
-              return nowMinutes > targetMinutes;
-            }
+            //   return nowMinutes > targetMinutes;
+            // }
 
             if (!todayTasks) return;
 
@@ -138,7 +138,6 @@ export function CalendarView() {
                   ${isCurrentMonth ? "bg-background" : "bg-muted"}
                   ${isCurrentDay && " border-2 border-foreground"}
                   hover:border-primary/50 cursor-pointer`}
-                    onClick={() => console.log(day)}
                   >
                     <span className={`text-base font-semibold text-foreground ${!isCurrentMonth && "text-muted-foreground"} ${isCurrentDay && "text-primary font-bold"}`}>
                       {format(day, "d")}
@@ -153,7 +152,6 @@ export function CalendarView() {
                           </li>
                         ))
                       )}
-
                     </ul>
                   </li>
                 </SheetTrigger>
@@ -178,11 +176,11 @@ export function CalendarView() {
                             <EditTask key={index}>
                               <EditTaskTrigger>
                                 <li key={task.id}
-                                  className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer text-start
-                                                ${task.completed && "border-green-500 bg-green-500/5"}
-                                                ${isAfterTime(task.date) && !task.completed && 'bg-red-500/5 border-red-500'}`
-                                  }
+                                  className={`border rounded-md p-2 shadow flex flex-col gap-2 w-full cursor-pointer text-start 
+                                    ${task.completed && getCompletionDate(task, day) && 'border-green-500'}`}
                                 >
+                                  {getCompletionDate(task, day)} teste
+
                                   <div className="flex flex-col w-full">
                                     <div className="flex w-full justify-between items-center">
                                       <span className="text-sm font-medium">{task.title}</span>

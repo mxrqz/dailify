@@ -1,3 +1,4 @@
+import { TaskProps } from "@/types/types"
 import { format } from "date-fns"
 import { enUS, ptBR } from "date-fns/locale"
 import { Timestamp } from "firebase/firestore"
@@ -36,3 +37,11 @@ export const formatDateByLocale = (date: Date, locale: string) => {
     const dateLocale = locale.startsWith("pt") ? ptBR : enUS;
     return format(date, "PPPP", { locale: dateLocale });
 };
+
+export function getCompletionDate(task: TaskProps, selectedDay: Date) {
+    if (!Array.isArray(task.completed)) return
+    const taskCompletedDate = task.completed.map(taskDate => (taskDate as Timestamp).toDate())
+    const haveBeenCompletedToday = taskCompletedDate.some(taskDate => format(taskDate, 'P') === format(selectedDay, "P")) ? true : false
+
+    return haveBeenCompletedToday
+}

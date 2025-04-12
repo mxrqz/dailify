@@ -70,8 +70,8 @@ export default function TaskPreview() {
                         <div className="relative flex flex-col gap-3">
                             <div className="flex gap-2 items-center font-bold text-2xl">
                                 {/* <CalendarCheckIcon size={28} /> */}
-                                <img src="../calendar_logo_6.png" alt="Calendar" className="w-10 aspect-square" />
-                                <span>Tarefa Criada</span>
+                                <img src="../calendar_logo_6.png" alt="Calendar" className="w-9 aspect-square" />
+                                <span className="leading-none">Tarefa  Criada</span>
                             </div>
 
                             <div className="flex flex-col font-medium text-lg">

@@ -17,8 +17,8 @@ import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
 import { useDailify } from "./dailifyContext";
 
-export default function NewTask() {
-    const { selectedDay, setNewTask, isCalendar } = useDailify()
+export default function NewTask({ className }: { className: string }) {
+    const { selectedDay, setNewTask } = useDailify()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -60,13 +60,13 @@ export default function NewTask() {
 
     return (
         <Dialog>
-            <DialogTrigger className={`${isCalendar ? "size-9" : 'w-full'} h-full bg-primary rounded-md flex items-center justify-center`}>
-                {/* <Button
+            <DialogTrigger asChild>
+                <Button
                     size={"icon"}
-                    className={`${isCalendar ? "" : 'w-full'} h-full`}
-                > */}
+                    className={className}
+                >
                     <PlusIcon />
-                {/* </Button> */}
+                </Button>
             </DialogTrigger>
 
             <DialogContent className="max-h-[calc(100%-2rem)] overflow-hidden flex flex-col">
