@@ -4,10 +4,11 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useDailify } from "../dailifyContext"
 import { Button } from "./button"
+import { cn } from "@/lib/utils"
 
-export default function Calendar3() {
+export default function Calendar3({ className }: { className?: string }) {
     const { setSelectedDay, selectedDay, setIsLoading } = useDailify()
-    
+
     const goToPreviousMonth = () => {
         setIsLoading(true)
         setSelectedDay(subMonths(selectedDay, 1))
@@ -39,7 +40,7 @@ export default function Calendar3() {
     }, [selectedDay])
 
     return (
-        <div className="flex flex-col gap-2 bg-background rounded-md p-2 border shrink-0">
+        <div className={cn('flex flex-col gap-2 bg-background rounded-md p-2 border shrink-0', className)}>
             <div className="w-full flex justify-between items-center">
                 <Button variant={"outline"} onClick={goToPreviousMonth} className="cursor-pointer size-7">
                     <ChevronLeftIcon />

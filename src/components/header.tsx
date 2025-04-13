@@ -2,19 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
 import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
-import React from "react";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 
-const Header = React.memo(() => {
+export default function Header({className}: {className?: string}) {
     const { user } = useUser()
     const { signOut } = useAuth()
     const navigate = useNavigate()
     const path = window.location.pathname
 
     return (
-        <header className="sticky top-0 py-5 inline-flex justify-between items-center w-full dark:bg-zinc-900/70 bg-zinc-100/70 backdrop-blur z-10">
+        <header className={`${className} sticky top-0 py-5 inline-flex justify-between items-center w-full dark:bg-zinc-900/70 bg-zinc-100/70 backdrop-blur z-10 rounded-b-md`}>
             <a href={path === "/" ? '/' : '/dashboard'} className="inline-flex gap-2 items-center">
                 <div className="relative h-7 aspect-square">
                     <img src="./dailify_logo_2.png" alt="" className="absolute h-full w-full object-cover invert dark:invert-0" />
@@ -74,6 +73,4 @@ const Header = React.memo(() => {
             </div>
         </header>
     )
-})
-
-export default Header
+}

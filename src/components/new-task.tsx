@@ -55,8 +55,6 @@ export default function NewTask({ className }: { className: string }) {
             repeat
         }
 
-        console.log(taskData)
-
         await saveTask(userId, taskData)
         setNewTask(taskData)
     }
