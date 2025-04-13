@@ -5,9 +5,6 @@ import RepeatPicker from "./ui/repeat-picker";
 import { Label } from "./ui/label";
 import TagsPicker from "./ui/tags-picker";
 import PriorityPicker from "./ui/priority-picker";
-import DurationPicker from "./ui/duration-picker";
-import TimePicker from "./ui/time-picker";
-import { DatePicker } from "./ui/date-picker";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
 import { useUser } from "@clerk/clerk-react";
@@ -15,6 +12,9 @@ import { Timestamp } from "firebase/firestore";
 import { useDailify } from "./dailifyContext";
 import { Button } from "./ui/button";
 import { saveEditedTask } from "@/functions/firebase";
+import { DatetimePicker } from "./ui/datetime-picker";
+import { DateInput, TimeField } from "./ui/timefield";
+import { TimeValue } from "react-aria-components";
 
 interface EditTaskProps {
 }
@@ -49,12 +49,17 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
     const [selectedDate, setSelectedDate] = useState<Date>(task.date instanceof Timestamp ? (task.date as Timestamp).toDate() : task.date as Date)
-    // const [fullDate, setFullDate] = useState<Date | undefined>()
     const [selectedDuration, setSelectedDuration] = useState<string>()
     const [priority, setPriority] = useState<number>(0)
     const [tags, setTags] = useState<string[]>()
     const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
     const { user } = useUser()
+
+    const handleDurationChange = (e: TimeValue) => {
+        const { hour, minute } = e
+        const finalMessage = `${hour && hour !== 0 ? hour + "h" : ''}${minute && minute !== 0 ? minute + "m" : ''}`
+        setSelectedDuration(finalMessage)
+    }
 
     const editTask = async () => {
         if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
@@ -80,8 +85,24 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
         setNewTask(taskData)
     }
 
+    const handleDurationValue = () => {
+        if (!task.duration) return
+
+        const hourMatch = task.duration.match(/(\d+)h/);
+        const minuteMatch = task.duration.match(/(\d+)m/);
+
+        const value = {
+            hour: hourMatch ? parseInt(hourMatch[1]) : 0,
+            millisecond: 0,
+            minute: minuteMatch ? parseInt(minuteMatch[1]) : 0,
+            second: 0
+        }
+
+        return value as TimeValue
+    }
+
     return (
-        <SheetContent className="w-[90%] overflow-hidden">
+        <SheetContent className="w-full overflow-hidden">
             <SheetHeader>
                 <SheetTitle>Edit Task</SheetTitle>
                 <SheetDescription>Update your task details</SheetDescription>
@@ -98,7 +119,29 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
                     <Textarea ref={descriptionRef} id="description" defaultValue={task.description} className="resize-none" rows={3} maxLength={250} placeholder="Task description" />
                 </div>
 
-                <div className="w-full flex items-center gap-3">
+                <div className="flex gap-3">
+                    <div className="flex flex-col gap-1">
+                        <Label htmlFor="date">Date</Label>
+
+                        <DatetimePicker value={selectedDate} className="border-1" onChange={(e) => e && setSelectedDate(e)} format={[
+                            ["months", "days", "years"],
+                            ["hours", "minutes", "am/pm"]
+                        ]} />
+                    </div>
+
+                    <div className="w-full">
+                        <TimeField aria-label="Duration" id="duration" value={handleDurationValue() && handleDurationValue()} onChange={(e) => e && handleDurationChange(e)} className="flex flex-col gap-1 w-full rounded-md">
+                            <Label htmlFor="duration">Duration</Label>
+
+                            <div className="flex gap-1 border rounded-md items-center px-2 focus-within:border-primary">
+                                <DateInput className={"border-0 h-9 data-[focus-within]:ring-0 data-[focus-within]:ring-offset-0 p-0"} />
+                                <span>{selectedDuration as string}</span>
+                            </div>
+                        </TimeField>
+                    </div>
+                </div>
+
+                {/* <div className="w-full flex items-center gap-3">
                     <div className="flex flex-col gap-1 w-full">
                         <Label htmlFor="date">Date</Label>
                         <DatePicker id="date" onSelectedDate={setSelectedDate} currentSelectedDate={selectedDate} />
@@ -117,7 +160,7 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
                 <div className="flex flex-col gap-1">
                     <Label htmlFor="duration">Duration</Label>
                     <DurationPicker onSelectedDuration={setSelectedDuration} task={task} />
-                </div>
+                </div> */}
 
                 <div className="flex flex-col gap-1">
                     <Label htmlFor="priority">Priority</Label>

@@ -9,7 +9,7 @@ import Verify from "./components/verify";
 import { DailifyProvider } from "./components/dailifyContext";
 import ProfilePage from "./pages/profile";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import TaskPreview from "./components/[id]/taskPreview";
+import TaskPreview from "./pages/[id]/taskPreview";
 import LandingPage from "./pages/landingPage";
 
 export default function App() {

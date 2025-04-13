@@ -5,7 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 import { weekDays } from "@/conts/conts";
 
 export default function RepeatPicker({ onSelectedRepeat, task }: RepeatPickerProps) {
-    const [repeat, setRepeat] = useState<string>(task && typeof task.repeat === "string" ? task.repeat : "Weekly")
+    const [repeat, setRepeat] = useState<string>(task ? (typeof task.repeat === "string" ? task.repeat : "Weekly") : "Off")
     const [selectedDays, setSelectedDays] = useState<string[]>(() => {
         if (task && typeof task.repeat === "object") {
             const repeatValues = Object.values(task.repeat)[0];

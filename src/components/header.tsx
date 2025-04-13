@@ -29,34 +29,44 @@ const Header = React.memo(() => {
                 <ModeToggle />
 
                 {user ? (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <Avatar className="size-9 cursor-pointer">
-                                <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} profile picture`} />
-                                <AvatarFallback>{user?.firstName?.slice(0, 1)}{user?.lastName?.slice(0, 1)}</AvatarFallback>
-                            </Avatar>
-                        </DropdownMenuTrigger>
+                    <div className="flex gap-5">
+                        {path === "/" && (
+                            <a href="/dashboard">
+                                <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground">
+                                    Dashboard
+                                </Button>
+                            </a>
+                        )}
 
-                        <DropdownMenuContent align="end" >
-                            <DropdownMenuItem onClick={(e) => { e.preventDefault; navigate('/profile') }} className="cursor-pointer">
-                                <UserIcon />
-                                <span>Profile</span>
-                            </DropdownMenuItem>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <Avatar className="size-9 cursor-pointer">
+                                    <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} profile picture`} />
+                                    <AvatarFallback>{user?.firstName?.slice(0, 1)}{user?.lastName?.slice(0, 1)}</AvatarFallback>
+                                </Avatar>
+                            </DropdownMenuTrigger>
 
-                            <DropdownMenuItem onClick={(e) => e.preventDefault()} className="cursor-pointer">
-                                <SettingsIcon />
-                                <span>Settings</span>
-                            </DropdownMenuItem>
+                            <DropdownMenuContent align="end" >
+                                <DropdownMenuItem onClick={(e) => { e.preventDefault; navigate('/profile') }} className="cursor-pointer">
+                                    <UserIcon />
+                                    <span>Profile</span>
+                                </DropdownMenuItem>
 
-                            <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
-                                <LogOutIcon />
-                                <span>LogOut</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                <DropdownMenuItem onClick={(e) => e.preventDefault()} className="cursor-pointer">
+                                    <SettingsIcon />
+                                    <span>Settings</span>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+                                    <LogOutIcon />
+                                    <span>LogOut</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 ) : (
                     <div className="flex gap-5">
-                        <Button className="bg-primary text-background hover:bg-primary/70 cursor-pointer" onClick={() => navigate("/login")}>
+                        <Button className="bg-foreground text-background hover:bg-primary/70 cursor-pointer" onClick={() => navigate("/login")}>
                             Login
                         </Button>
                     </div>

@@ -8,10 +8,10 @@ import { Badge } from "@/components/ui/badge";
 export default function LandingPage() {
 
     return (
-        <main className="flex flex-col gap-10 w-full px-[clamp(1rem,5vw,24rem)]">
+        <main className="flex flex-col gap-10 w-full">
             <Header />
 
-            <section className="w-full grid md:grid-cols-2 gap-10 md:gap-36 items-center">
+            <section className="w-full grid md:grid-cols-2 gap-10 md:gap-36 items-center px-[clamp(1rem,5vw,24rem)]">
                 <div className="flex flex-col gap-5 shrink text-pretty">
                     <h1 className="text-5xl sm:text-6xl font-bold leading-none">
                         Organize your daily tasks <span className="text-primary">effortlessly</span>
@@ -116,8 +116,8 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            <section className="w-full flex flex-col gap-10 items-center">
-                <div className="max-w-3xl text-center">
+            <section className="w-full flex flex-col gap-10 items-center px-[clamp(1rem,5vw,24rem)]">
+                <div className="max-w-3xl text-center flex flex-col gap-3">
                     <h2 className="text-3xl md:text-4xl font-bold">Everything you need to stay organized</h2>
 
                     <p className="text-xl text-gray-600">
@@ -163,6 +163,58 @@ export default function LandingPage() {
                     </li>
                 </ul>
 
+            </section>
+
+            <section id="how-it-works" className="bg-background py-20 px-[clamp(1rem,5vw,24rem)]">
+                <div className="container mx-auto px-4">
+                    <div className="text-center max-w-3xl mx-auto mb-16" >
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">How Dailify works</h2>
+                        <p className="text-xl text-gray-600">Getting started is simple. Organize your tasks in just a few steps.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        {[
+                            {
+                                step: "01",
+                                title: "Create your tasks",
+                                description:
+                                    "Add tasks with details like time, duration, and priority. Set them as one-time or recurring.",
+                            },
+                            {
+                                step: "02",
+                                title: "Organize your day",
+                                description:
+                                    "View your tasks in a clean calendar interface. Rearrange as needed to optimize your schedule.",
+                            },
+                            {
+                                step: "03",
+                                title: "Stay on track",
+                                description: "Mark tasks as completed, receive reminders, and maintain your productivity momentum.",
+                            },
+                        ].map((step, index) => (
+                            <div
+                                key={index}
+                                className="text-center"
+                                
+                            >
+                                <div className="w-16 h-16 bg-red-500/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span className="text-red-500 font-bold">{step.step}</span>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                                <p className="text-gray-600">{step.description}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div
+                        className="mt-16 text-center"
+                        
+                    >
+                        <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white">
+                            Get Started Now
+                        </Button>
+                    </div>
+                </div>
             </section>
         </main>
     )

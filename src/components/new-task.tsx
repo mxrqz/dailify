@@ -1,21 +1,20 @@
 import { PlusIcon } from "lucide-react";
-import { DatePicker } from "./ui/date-picker";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { useEffect, useRef, useState } from "react";
-import TimePicker from "./ui/time-picker";
-import DurationPicker from "./ui/duration-picker";
 import PriorityPicker from "./ui/priority-picker";
 import TagsPicker from "./ui/tags-picker";
 import RepeatPicker from "./ui/repeat-picker";
 import { Button } from "./ui/button";
 import { nanoid } from 'nanoid';
 import { TaskProps } from "@/types/types";
-import { saveTask } from "@/functions/firebase";
 import { useUser } from "@clerk/clerk-react";
 import { useDailify } from "./dailifyContext";
+import { DatetimePicker } from "./ui/datetime-picker";
+import { DateInput, TimeField } from "@/components/ui/timefield";
+import { TimeValue } from "react-aria-components";
 
 export default function NewTask({ className }: { className: string }) {
     const { selectedDay, setNewTask } = useDailify()
@@ -23,12 +22,17 @@ export default function NewTask({ className }: { className: string }) {
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
     const [selectedDate, setSelectedDate] = useState<Date>(selectedDay)
-    // const [fullDate, setFullDate] = useState<Date | undefined>()
-    const [selectedDuration, setSelectedDuration] = useState<string>()
+    const [selectedDuration, setSelectedDuration] = useState<string>('10m')
     const [priority, setPriority] = useState<number>(0)
     const [tags, setTags] = useState<string[]>()
     const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
     const { user } = useUser()
+
+    const handleDurationChange = (e: TimeValue) => {
+        const { hour, minute } = e
+        const finalMessage = `${hour && hour !== 0 ? hour + "h" : ''}${minute && minute !== 0 ? minute + "m" : ''}`
+        setSelectedDuration(finalMessage)
+    }
 
     const addNewTask = async () => {
         if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
@@ -50,8 +54,10 @@ export default function NewTask({ className }: { className: string }) {
             repeat
         }
 
-        await saveTask(userId, taskData)
-        setNewTask(taskData)
+        console.log(taskData)
+
+        // await saveTask(userId, taskData)
+        // setNewTask(taskData)
     }
 
     useEffect(() => {
@@ -78,32 +84,34 @@ export default function NewTask({ className }: { className: string }) {
                 <div className="flex flex-col gap-4 scrollbar-floating">
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="title">Title</Label>
-                        <Input ref={titleRef} id="title" type="text" placeholder="Task title" required />
+                        <Input ref={titleRef} id="title" type="text" placeholder="Task title" className="focus-visible:ring-0" required />
                     </div>
 
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="description">Description</Label>
-                        <Textarea ref={descriptionRef} id="description" className="resize-none" rows={3} maxLength={250} placeholder="Task description" />
+                        <Textarea ref={descriptionRef} id="description" className="resize-none focus-visible:ring-0" rows={3} maxLength={250} placeholder="Task description" />
                     </div>
 
-                    <div className="w-full flex items-center gap-3">
-                        <div className="flex flex-col gap-1 w-full">
+                    <div className="flex gap-3">
+                        <div className="flex flex-col gap-1">
                             <Label htmlFor="date">Date</Label>
-                            <DatePicker id="date" onSelectedDate={setSelectedDate} currentSelectedDate={selectedDate} />
+
+                            <DatetimePicker className="border-1" onChange={(e) => e && setSelectedDate(e)} format={[
+                                ["months", "days", "years"],
+                                ["hours", "minutes", "am/pm"]
+                            ]} />
                         </div>
 
-                        <div className="flex flex-col gap-1 w-full">
-                            <Label htmlFor="time">Time</Label>
-                            <TimePicker
-                                onSelectedTime={setSelectedDate}
-                                selectedDate={selectedDate}
-                            />
-                        </div>
-                    </div>
+                        <div className="w-full">
+                            <TimeField aria-label="Duration" id="duration" defaultValue={{ hour: 0, millisecond: 0, minute: 10, second: 0 } as TimeValue} onChange={(e) => e && handleDurationChange(e)} className="flex flex-col gap-1 w-full rounded-md">
+                                <Label htmlFor="duration">Duration</Label>
 
-                    <div className="flex flex-col gap-1">
-                        <Label htmlFor="duration">Duration</Label>
-                        <DurationPicker onSelectedDuration={setSelectedDuration} />
+                                <div className="flex gap-1 border rounded-md items-center px-2 focus-within:border-primary">
+                                    <DateInput className={"border-0 h-9 data-[focus-within]:ring-0 data-[focus-within]:ring-offset-0 p-0"} />
+                                    <span>{selectedDuration}</span>
+                                </div>
+                            </TimeField>
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -122,13 +130,13 @@ export default function NewTask({ className }: { className: string }) {
                     </div>
                 </div>
 
-                <DialogClose asChild>
-                    <Button variant={"outline"} className="w-full"
-                        onClick={() => addNewTask()}
-                    >
-                        <PlusIcon />
-                    </Button>
-                </DialogClose>
+                {/* <DialogClose asChild> */}
+                <Button variant={"outline"} className="w-full"
+                    onClick={() => addNewTask()}
+                >
+                    <PlusIcon />
+                </Button>
+                {/* </DialogClose> */}
             </DialogContent>
         </Dialog>
     )
