@@ -6,7 +6,7 @@ import { useUser, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 
-export default function Header({className}: {className?: string}) {
+export default function Header({ className }: { className?: string }) {
     const { user } = useUser()
     const { signOut } = useAuth()
     const navigate = useNavigate()
@@ -29,10 +29,16 @@ export default function Header({className}: {className?: string}) {
 
                 {user ? (
                     <div className="flex gap-5">
-                        {path === "/" && (
+                        {path === "/" ? (
                             <a href="/dashboard">
                                 <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground">
                                     Dashboard
+                                </Button>
+                            </a>
+                        ) : (
+                            <a href="/premium">
+                                <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground">
+                                    Get Premium
                                 </Button>
                             </a>
                         )}
