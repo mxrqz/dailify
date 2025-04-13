@@ -15,9 +15,10 @@ import { useDailify } from "./dailifyContext";
 import { DatetimePicker } from "./ui/datetime-picker";
 import { DateInput, TimeField } from "@/components/ui/timefield";
 import { TimeValue } from "react-aria-components";
+import { saveTask } from "@/functions/firebase";
 
 export default function NewTask({ className }: { className: string }) {
-    const { selectedDay, setNewTask } = useDailify()
+    const { selectedDay, setNewTask} = useDailify()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -56,8 +57,8 @@ export default function NewTask({ className }: { className: string }) {
 
         console.log(taskData)
 
-        // await saveTask(userId, taskData)
-        // setNewTask(taskData)
+        await saveTask(userId, taskData)
+        setNewTask(taskData)
     }
 
     useEffect(() => {
