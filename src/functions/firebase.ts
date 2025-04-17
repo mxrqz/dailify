@@ -19,45 +19,79 @@ const auth = getAuth(app)
 
 export { auth }
 
-export async function saveTask(userId: string, taskData: TaskProps) {
-    await setDoc(doc(db, "users", userId, "tasks", taskData.id), taskData);
+export async function saveTask(taskData: TaskProps, token: string): Promise<{ error?: string }> {
+    const response = await fetch('http://localhost:3333/createTask', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(taskData)
+    })
 
-    if (taskData.repeat !== "Off" && typeof taskData.repeat === "string") {
-        const taskRef = doc(db, "users", userId, "repeatTasks", taskData.repeat);
-        const taskSnap = await getDoc(taskRef);
-
-        if (taskSnap.exists()) {
-            await updateDoc(taskRef, {
-                id: arrayUnion(taskData.id)
-            });
-        } else {
-            await setDoc(taskRef, {
-                id: [taskData.id]
-            });
-        }
-    } else if (typeof taskData.repeat === 'object') {
-        const repeatValues = Object.values(taskData.repeat)[0]
-
-        repeatValues?.forEach(async day => {
-            const taskRef = doc(db, "users", userId, "repeatTasks", day)
-            const taskSnap = await getDoc(taskRef)
-
-            if (taskSnap.exists()) {
-                await updateDoc(taskRef, {
-                    id: arrayUnion(taskData.id)
-                })
-            } else {
-                await setDoc(taskRef, {
-                    id: [taskData.id]
-                });
-            }
-        })
+    const data = await response.json()
+    if (data.error) {
+        return { error: data.error }
     }
+
+    return {}
 }
 
-export async function saveEditedTask(userId: string, taskData: TaskProps) {
-    const docToUpdate = doc(db, "users", userId, "tasks", taskData.id);
-    updateDoc(docToUpdate, { ...taskData })
+// export async function saveTask(userId: string, taskData: TaskProps) {
+//     await setDoc(doc(db, "users", userId, "tasks", taskData.id), taskData);
+
+//     if (taskData.repeat !== "Off" && typeof taskData.repeat === "string") {
+//         const taskRef = doc(db, "users", userId, "repeatTasks", taskData.repeat);
+//         const taskSnap = await getDoc(taskRef);
+
+//         if (taskSnap.exists()) {
+//             await updateDoc(taskRef, {
+//                 id: arrayUnion(taskData.id)
+//             });
+//         } else {
+//             await setDoc(taskRef, {
+//                 id: [taskData.id]
+//             });
+//         }
+//     } else if (typeof taskData.repeat === 'object') {
+//         const repeatValues = Object.values(taskData.repeat)[0]
+
+//         repeatValues?.forEach(async day => {
+//             const taskRef = doc(db, "users", userId, "repeatTasks", day)
+//             const taskSnap = await getDoc(taskRef)
+
+//             if (taskSnap.exists()) {
+//                 await updateDoc(taskRef, {
+//                     id: arrayUnion(taskData.id)
+//                 })
+//             } else {
+//                 await setDoc(taskRef, {
+//                     id: [taskData.id]
+//                 });
+//             }
+//         })
+//     }
+// }
+
+export async function saveEditedTask(taskData: TaskProps, token: string): Promise<{ error?: string }> {
+    // const docToUpdate = doc(db, "users", userId, "tasks", taskData.id);
+    // updateDoc(docToUpdate, { ...taskData })
+
+    const response = await fetch('http://localhost:3333/editTask', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(taskData)
+    })
+
+    const data = await response.json()
+    if (data.error) {
+        return { error: data.error }
+    }
+
+    return {}
 }
 
 export async function markTaskAsCompleted(userId: string, taskId: string) {

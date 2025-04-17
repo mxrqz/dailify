@@ -7,7 +7,7 @@ import TagsPicker from "./ui/tags-picker";
 import PriorityPicker from "./ui/priority-picker";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { Timestamp } from "firebase/firestore";
 import { useDailify } from "./dailifyContext";
 import { Button } from "./ui/button";
@@ -15,6 +15,8 @@ import { saveEditedTask } from "@/functions/firebase";
 import { DatetimePicker } from "./ui/datetime-picker";
 import { DateInput, TimeField } from "./ui/timefield";
 import { TimeValue } from "react-aria-components";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface EditTaskProps {
 }
@@ -45,6 +47,8 @@ export function EditTaskTrigger({ children }: { children: ReactNode }) {
 
 export function EditTaskContent({ task }: { task: TaskProps }) {
     const { setNewTask } = useDailify()
+    const { getToken } = useAuth()
+    const navigate = useNavigate()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -54,6 +58,7 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
     const [tags, setTags] = useState<string[]>()
     const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
     const { user } = useUser()
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleDurationChange = (e: TimeValue) => {
         const { hour, minute } = e
@@ -62,12 +67,16 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
     }
 
     const editTask = async () => {
-        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+        const token = await getToken()
 
-        const userId = user.id
+        if (!token || !user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+
+        // const userId = user.id
         const title = titleRef.current.value
         const desc = descriptionRef.current.value
         const id = task.id
+
+        if (!title || !desc) return
 
         const taskData = {
             date: selectedDate,
@@ -81,8 +90,22 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
             repeat
         }
 
-        await saveEditedTask(userId, taskData)
-        setNewTask(taskData)
+        setLoading(true)
+        
+        const { error } = await saveEditedTask(taskData, token)
+        if (error) {
+            toast('An error occurred', {
+                description: error,
+                action: {
+                    label: 'Get Premium',
+                    onClick: () => navigate('/prices')
+                },
+            })
+        } else {
+            setNewTask(taskData)
+        }
+
+        setLoading(false)
     }
 
     const handleDurationValue = () => {

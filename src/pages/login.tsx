@@ -35,7 +35,6 @@ export default function Login() {
                 redirectUrlComplete: from,
             })
             .then(async (res) => {
-                // await getFirebaseToken();
                 console.log(res);
             })
             .catch((err: ClerkAPIError) => {
@@ -76,7 +75,6 @@ export default function Login() {
             });
 
             if (signInAttempt.firstFactorVerification.status === "verified") {
-                // const token = await getFirebaseToken();
                 window.location.href = from;
             } else if (signInAttempt.firstFactorVerification.status === "expired") {
                 console.log("The email link has expired.");
@@ -86,6 +84,9 @@ export default function Login() {
                 if (err.errors[0].code === "form_identifier_not_found") {
                     await signUp.create({
                         emailAddress,
+                        unsafeMetadata: {
+                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        }
                     });
 
                     const signUpAttempt = await startEmailLinkFlow({

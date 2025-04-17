@@ -6,6 +6,7 @@ import { useDailify } from "./dailifyContext";
 import { auth, getTasksForMonth } from "@/functions/firebase";
 import { isSameMonth } from "date-fns";
 import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
+import { Toaster } from "@/components/ui/sonner"
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isSignedIn, isLoaded, user } = useUser()
@@ -33,6 +34,21 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
 
         return () => unsubscribe();
     }, [userId]);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const savedTimezone = user.unsafeMetadata?.timezone;
+
+        if (!savedTimezone) {
+            user.update({
+                unsafeMetadata: {
+                    timezone: currentTimezone,
+                },
+            });
+        }
+    }, [user]);
 
     const getTasks = async () => {
         setIsLoading(true)
@@ -76,6 +92,9 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     }
 
     if (isLoaded && !isLoading) {
-        return <>{children}</>
+        return <>
+            {children}
+            <Toaster />
+        </>
     }
 }

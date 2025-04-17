@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -10,15 +10,20 @@ import RepeatPicker from "./ui/repeat-picker";
 import { Button } from "./ui/button";
 import { nanoid } from 'nanoid';
 import { TaskProps } from "@/types/types";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { useDailify } from "./dailifyContext";
 import { DatetimePicker } from "./ui/datetime-picker";
 import { DateInput, TimeField } from "@/components/ui/timefield";
 import { TimeValue } from "react-aria-components";
 import { saveTask } from "@/functions/firebase";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function NewTask({ className }: { className: string }) {
-    const { selectedDay, setNewTask} = useDailify()
+    const { getToken } = useAuth()
+    const { selectedDay, setNewTask } = useDailify()
+
+    const navigate = useNavigate()
 
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -29,6 +34,8 @@ export default function NewTask({ className }: { className: string }) {
     const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
     const { user } = useUser()
 
+    const [loading, setLoading] = useState<boolean>(false)
+
     const handleDurationChange = (e: TimeValue) => {
         const { hour, minute } = e
         const finalMessage = `${hour && hour !== 0 ? hour + "h" : ''}${minute && minute !== 0 ? minute + "m" : ''}`
@@ -36,12 +43,14 @@ export default function NewTask({ className }: { className: string }) {
     }
 
     const addNewTask = async () => {
-        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+        const token = await getToken()
+        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat || !token) return
 
-        const userId = user.id
         const title = titleRef.current.value
         const desc = descriptionRef.current.value
         const id = nanoid(6)
+
+        if (!title || !desc) return
 
         const taskData: TaskProps = {
             date: selectedDate,
@@ -55,8 +64,22 @@ export default function NewTask({ className }: { className: string }) {
             repeat
         }
 
-        await saveTask(userId, taskData)
-        setNewTask(taskData)
+        setLoading(true)
+
+        const { error } = await saveTask(taskData, token)
+        if (error) {
+            toast('An error occurred', {
+                description: error,
+                action: {
+                    label: 'Get Premium',
+                    onClick: () => navigate('/prices')
+                },
+            })
+        } else {
+            setNewTask(taskData)
+        }
+
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -130,10 +153,14 @@ export default function NewTask({ className }: { className: string }) {
                 </div>
 
                 {/* <DialogClose asChild> */}
-                <Button variant={"outline"} className="w-full"
+                <Button variant={"outline"} className="w-full cursor-pointer" disabled={loading}
                     onClick={() => addNewTask()}
                 >
-                    <PlusIcon />
+                    {loading ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <PlusIcon />
+                    )}
                 </Button>
                 {/* </DialogClose> */}
             </DialogContent>
