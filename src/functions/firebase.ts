@@ -38,6 +38,18 @@ export async function saveTask(taskData: TaskProps, token: string): Promise<{ er
     return {}
 }
 
+export async function createTaskVoice(token: string, formData: FormData) {
+    const response = await fetch(`${serverURL}createTaskByVoice`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: formData
+    })
+
+    return response
+}
+
 // export async function saveTask(userId: string, taskData: TaskProps) {
 // await setDoc(doc(db, "users", userId, "tasks", taskData.id), taskData);
 
@@ -107,7 +119,7 @@ export async function markTaskAsCompleted(token: string, taskId: string) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({taskId: taskId})
+        body: JSON.stringify({ taskId: taskId })
     })
 
     const data = await response.json()

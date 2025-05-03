@@ -5,6 +5,7 @@ import WaveSurfer from 'wavesurfer.js';
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
 import { useAuth } from "@clerk/clerk-react";
 import { TaskProps } from "@/types/types";
+import { createTaskVoice } from "@/functions/firebase";
 
 export default function Waveform({ onResponse }: { onResponse: (response: TaskProps[]) => void }) {
     const isValidRepeat = (value: any): value is TaskProps["repeat"] => ["Off", "Daily", "Monthly", "Yearly"].includes(value);
@@ -33,17 +34,17 @@ export default function Waveform({ onResponse }: { onResponse: (response: TaskPr
         setIsRecording(false);
     };
 
-    const getResponse = async (token: string, formData: FormData) => {
-        const response = await fetch('http://localhost:3333/createTaskByVoice', {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            body: formData
-        })
+    // const getResponse = async (token: string, formData: FormData) => {
+    //     const response = await fetch('http://localhost:3333/createTaskByVoice', {
+    //         method: "POST",
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         },
+    //         body: formData
+    //     })
 
-        return response
-    }
+    //     return response
+    // }
 
     const handleSendRequest = async () => {
         if (!record) return
@@ -56,7 +57,7 @@ export default function Waveform({ onResponse }: { onResponse: (response: TaskPr
         const formData = new FormData();
         formData.append('audio', record);
 
-        const response = await getResponse(token, formData)
+        const response = await createTaskVoice(token, formData)
         const data = await response.json()
 
         if (!data) return
