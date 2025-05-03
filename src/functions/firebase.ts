@@ -153,6 +153,7 @@ export async function getTasksForMonth(userId: string, month: Date) {
         return uniqueTasks
     }
 
+
     return tasks
 }
 
@@ -173,23 +174,22 @@ async function getMonthTasks(userId: string, month: Date) {
     })
 
     return tasks
-}
+}  
 
 async function getMonthlyRepeatTasks(userId: string, month: Date) {
     const repeatTasksDocRef = collection(db, "users", userId, "repeatTasks");
     const repeatTasksDocs = await getDocs(repeatTasksDocRef);
 
-    let taskIds: string[] = [];
+    const taskIdSet = new Set<string>();
 
     repeatTasksDocs.forEach(doc => {
         if (!doc.exists()) return;
 
-        const id = doc.data().id[0];
-
-        if (!taskIds.includes(id)) {
-            taskIds.push(id)
-        }
+        const ids: string[] = doc.data().id;
+        ids.forEach(id => taskIdSet.add(id));
     });
+
+    const taskIds = Array.from(taskIdSet);
 
     return getMonthTaskByIds(userId, taskIds, month);
 }
