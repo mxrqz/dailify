@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import PriorityPicker from "./ui/priority-picker";
 import TagsPicker from "./ui/tags-picker";
 import RepeatPicker from "./ui/repeat-picker";
@@ -18,6 +18,7 @@ import { TimeValue } from "react-aria-components";
 import { saveTask } from "@/functions/firebase";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 export default function NewTask({ className }: { className: string }) {
     const { getToken } = useAuth()
@@ -31,7 +32,7 @@ export default function NewTask({ className }: { className: string }) {
     const [selectedDuration, setSelectedDuration] = useState<string>('10m')
     const [priority, setPriority] = useState<number>(0)
     const [tags, setTags] = useState<string[]>()
-    const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
+    const [repeat, setRepeat] = useState<"Off" | "Daily" | "Monthly" | "Yearly" | { Weekly: string[] | undefined }>()
     const { user } = useUser()
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -42,15 +43,28 @@ export default function NewTask({ className }: { className: string }) {
         setSelectedDuration(finalMessage)
     }
 
-    const addNewTask = async () => {
-        const token = await getToken()
-        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat || !token) return
+    const addNewTask = async (e: FormEvent) => {
+        e.preventDefault()
+
+        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return;
+
+        const token = await getToken();
+        if (!token) return;
 
         const title = titleRef.current.value
         const desc = descriptionRef.current.value
         const id = nanoid(6)
 
-        if (!title || !desc) return
+        if (!title) {
+            toast.warning('Title is required');
+            return;
+        } else if (!desc) {
+            toast.warning('Description is required');
+            return;
+        } else if (!selectedDate || !selectedDuration || priority === null || !repeat) {
+            toast.warning('All fields are required')
+            return;
+        }
 
         const taskData: TaskProps = {
             date: selectedDate,
@@ -76,7 +90,10 @@ export default function NewTask({ className }: { className: string }) {
                 },
             })
         } else {
-            setNewTask(taskData)
+            setNewTask(taskData);
+            toast.message('Event has been created', {
+                description: format(taskData.date as Date, 'cccc PPPpp'),
+            })
         }
 
         setLoading(false)
@@ -103,6 +120,7 @@ export default function NewTask({ className }: { className: string }) {
                     <DialogDescription>Create a new task</DialogDescription>
                 </DialogHeader>
 
+                {/* <form onSubmit={addNewTask} className="flex flex-col gap-4"> */}
                 <div className="flex flex-col gap-4 scrollbar-floating">
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="title">Title</Label>
@@ -111,7 +129,7 @@ export default function NewTask({ className }: { className: string }) {
 
                     <div className="flex flex-col gap-1">
                         <Label htmlFor="description">Description</Label>
-                        <Textarea ref={descriptionRef} id="description" className="resize-none focus-visible:ring-0" rows={3} maxLength={250} placeholder="Task description" />
+                        <Textarea ref={descriptionRef} id="description" className="resize-none focus-visible:ring-0" rows={3} maxLength={250} placeholder="Task description" required />
                     </div>
 
                     <div className="flex gap-3">
@@ -153,8 +171,8 @@ export default function NewTask({ className }: { className: string }) {
                 </div>
 
                 {/* <DialogClose asChild> */}
-                <Button variant={"outline"} className="w-full cursor-pointer" disabled={loading}
-                    onClick={() => addNewTask()}
+                <Button type="submit" variant={"outline"} className="w-full cursor-pointer" disabled={loading}
+                    onClick={addNewTask}
                 >
                     {loading ? (
                         <Loader2 className="animate-spin" />
@@ -162,6 +180,7 @@ export default function NewTask({ className }: { className: string }) {
                         <PlusIcon />
                     )}
                 </Button>
+                {/* </form> */}
                 {/* </DialogClose> */}
             </DialogContent>
         </Dialog>

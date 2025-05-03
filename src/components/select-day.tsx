@@ -7,51 +7,20 @@ import NewTask from "./new-task";
 import { TaskProps } from "@/types/types";
 import { Timestamp } from "firebase/firestore";
 import Calendar2 from "./ui/calendar2";
-
-// function getNextTask(tasks: TaskProps[], selectedDay: Date): TaskProps | undefined {
-//     const todayTasks = tasks
-//         .filter(task => {
-//             const taskDate = (task.date as Timestamp).toDate();
-//             return taskDate.toDateString() === selectedDay.toDateString();
-//         })
-//         .sort((a, b) => {
-//             const aDate = (a.date as Timestamp).toDate().getTime();
-//             const bDate = (b.date as Timestamp).toDate().getTime();
-//             return aDate - bDate;
-//         });
-
-//     const now = new Date();
-
-//     const nextTask = todayTasks.find(task => {
-//         const taskTime = (task.date as Timestamp).toDate().getTime();
-//         return taskTime > now.getTime()
-//     })
-
-//     return nextTask
-// }
-
-function getNextTask(tasks: TaskProps[], selectedDay: Date) {
-    const now = new Date()
-    const todayTasks = tasks?.filter(task => (task.date as Timestamp).toDate().getDate() === selectedDay.getDate())
-
-    const nextTask = todayTasks.find(task => {
-        const taskTime = format((task.date as Timestamp).toDate(), "hhmm");
-        return Number(taskTime) > Number(format(now, 'hhmm'))
-    })
-
-    return nextTask
-}
+import { getNextTask } from "@/functions/functions";
+import NewTaskVoice from "./new-task-voice";
 
 export default function SelectDay() {
-    const {selectedDay, tasks, setIsCalendar, isCalendar } = useDailify()
+    const { setIsCalendar, isCalendar, currentMonthTasks } = useDailify()
     const [nextTask, setNextTask] = useState<TaskProps>()
 
+
     useEffect(() => {
-        if (tasks) {
-            const task = getNextTask(tasks, selectedDay)
+        if (currentMonthTasks) {
+            const task = getNextTask(currentMonthTasks)
             setNextTask(task)
         }
-    }, [tasks])
+    }, [currentMonthTasks])
 
     return (
         <section className='flex flex-col md:flex-row gap-5 w-full'>
@@ -59,7 +28,11 @@ export default function SelectDay() {
 
             <div className="flex flex-col w-full gap-3">
                 <div className="flex w-full gap-3 h-full">
-                    <NewTask className="w-full shrink md:h-full border cursor-pointer" />
+                    <div className="flex gap-3 w-full">
+                        <NewTask className="w-full shrink md:h-full border cursor-pointer" />
+
+                        <NewTaskVoice />
+                    </div>
 
                     <Button
                         size={"icon"}

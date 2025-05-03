@@ -19,7 +19,6 @@ export default function Calendar2() {
     }
 
     const goToToday = () => {
-        setIsLoading(true)
         setSelectedDay(new Date())
     }
 

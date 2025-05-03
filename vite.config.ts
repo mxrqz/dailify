@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path"
 import tailwindcss from "@tailwindcss/vite"
+import mkcert from 'vite-plugin-mkcert'
 
 const host = process.env.TAURI_DEV_HOST;
 
@@ -9,7 +10,8 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [
     react(),
-    tailwindcss()
+    tailwindcss(),
+    mkcert(),
   ],
 
   resolve: {
@@ -18,16 +20,13 @@ export default defineConfig(async () => ({
     },
   },
 
-  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
-  // 1. prevent vite from obscuring rust errors
   clearScreen: false,
-  // 2. tauri expects a fixed port, fail if that port is not available
+  
   server: {
     port: 1420,
     strictPort: true,
     host: host || false,
-    allowedHosts: ["ddc8-2804-317c-7314-800-e8b4-db4d-7589-22ca.ngrok-free.app"],
+    // allowedHosts: ["8032-2804-317c-731e-3a00-7d8e-96bc-489f-600.ngrok-free.app"],
     hmr: host
       ? {
         protocol: "ws",
@@ -36,7 +35,6 @@ export default defineConfig(async () => ({
       }
       : undefined,
     watch: {
-      // 3. tell vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
     },
   },

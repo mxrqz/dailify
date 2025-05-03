@@ -14,13 +14,14 @@ import { useDailify } from "./dailifyContext";
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { markTaskAsCompleted } from "@/functions/firebase";
-import { useUser } from "@clerk/clerk-react";
+import { deleteTask, markTaskAsCompleted } from "@/functions/firebase";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 export default function DailyTasks() {
     const { selectedDay, newTask, tasks, setTasks, isCalendar } = useDailify()
     const [dayTasks, setDayTasks] = useState<TaskProps[]>()
-    const {user} = useUser()
+    const { user } = useUser()
+    const { getToken } = useAuth()
 
     const updateTaskToCompleted = (taskId: string) => {
         const now = new Date()
@@ -40,6 +41,12 @@ export default function DailyTasks() {
 
         if (!updatedTasks) return;
         setTasks(updatedTasks);
+    }
+
+    const deleteTaskLocal = (taskId: string) => {
+        const newTasks = tasks?.filter(task => task.id !== taskId)
+        if (!newTasks) return
+        setTasks(newTasks)
     }
 
     useEffect(() => {
@@ -138,9 +145,10 @@ export default function DailyTasks() {
                                                                 <Button
                                                                     variant={"outline"}
                                                                     className="bg-transparent cursor-pointer"
-                                                                    onClick={(e) => {
+                                                                    onClick={async (e) => {
+                                                                        const token = await getToken();
                                                                         e.stopPropagation();
-                                                                        user && markTaskAsCompleted(user?.id, task.id);
+                                                                        token && markTaskAsCompleted(token, task.id);
                                                                         updateTaskToCompleted(task.id);
                                                                     }}
                                                                 >
@@ -149,7 +157,11 @@ export default function DailyTasks() {
 
                                                                 <Button
                                                                     className="bg-red-500 cursor-pointer"
-                                                                    onClick={(e) => e.stopPropagation()}
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        user && await deleteTask(user?.id, task.id);
+                                                                        deleteTaskLocal(task.id)
+                                                                    }}
                                                                 >
                                                                     Delete
                                                                 </Button>

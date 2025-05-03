@@ -17,6 +17,7 @@ import { DateInput, TimeField } from "./ui/timefield";
 import { TimeValue } from "react-aria-components";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 interface EditTaskProps {
 }
@@ -53,10 +54,10 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
     const titleRef = useRef<HTMLInputElement>(null)
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
     const [selectedDate, setSelectedDate] = useState<Date>(task.date instanceof Timestamp ? (task.date as Timestamp).toDate() : task.date as Date)
-    const [selectedDuration, setSelectedDuration] = useState<string>()
+    const [selectedDuration, setSelectedDuration] = useState<string>(task.duration)
     const [priority, setPriority] = useState<number>(0)
     const [tags, setTags] = useState<string[]>()
-    const [repeat, setRepeat] = useState<string | { Weekly: string[] | undefined }>()
+    const [repeat, setRepeat] = useState<"Off" | "Daily" | "Monthly" | "Yearly" | { Weekly: string[] | undefined }>()
     const { user } = useUser()
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -67,9 +68,12 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
     }
 
     const editTask = async () => {
-        const token = await getToken()
+        setLoading(true)
 
-        if (!token || !user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+
+        const token = await getToken()
+        if (!token) return
 
         // const userId = user.id
         const title = titleRef.current.value
@@ -90,8 +94,6 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
             repeat
         }
 
-        setLoading(true)
-        
         const { error } = await saveEditedTask(taskData, token)
         if (error) {
             toast('An error occurred', {
@@ -153,12 +155,17 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
                     </div>
 
                     <div className="w-full">
-                        <TimeField aria-label="Duration" id="duration" value={handleDurationValue() && handleDurationValue()} onChange={(e) => e && handleDurationChange(e)} className="flex flex-col gap-1 w-full rounded-md">
+                        <TimeField
+                            aria-label="Duration"
+                            id="duration"
+                            value={handleDurationValue() && handleDurationValue()} onChange={(e) => e && handleDurationChange(e)}
+                            className="flex flex-col gap-1 w-full rounded-md"
+                        >
                             <Label htmlFor="duration">Duration</Label>
 
-                            <div className="flex gap-1 border rounded-md items-center px-2 focus-within:border-primary">
+                            <div className="flex border rounded-md items-center px-2 focus-within:border-primary">
                                 <DateInput className={"border-0 h-9 data-[focus-within]:ring-0 data-[focus-within]:ring-offset-0 p-0"} />
-                                <span>{selectedDuration as string}</span>
+                                {/* <span>{selectedDuration as string}</span> */}
                             </div>
                         </TimeField>
                     </div>
@@ -208,11 +215,17 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
                     </Button>
                 </SheetClose>
 
-                <SheetClose>
-                    <Button variant={"default"} className="cursor-pointer" onClick={editTask}>
-                        Save
-                    </Button>
-                </SheetClose>
+                {/* <SheetClose> */}
+                <Button className="cursor-pointer bg-primary" disabled={loading}
+                    onClick={editTask}
+                >
+                    {loading ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <>Save</>
+                    )}
+                </Button>
+                {/* </SheetClose> */}
             </SheetFooter>
         </SheetContent>
     )

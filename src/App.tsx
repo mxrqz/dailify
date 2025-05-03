@@ -5,7 +5,7 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import ProtectedRoute from "./components/protected-route";
 import SSOCallback from "./components/sso-callback";
-import Verify from "./components/verify";
+import Verify from "./pages/verify";
 import { DailifyProvider } from "./components/dailifyContext";
 import ProfilePage from "./pages/profile";
 import { Helmet, HelmetProvider } from "react-helmet-async";

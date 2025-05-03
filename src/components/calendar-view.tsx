@@ -13,6 +13,7 @@ import { getCompletionDate, getTime } from "@/functions/functions";
 import { TaskProps } from "@/types/types";
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task";
 import { Badge } from "./ui/badge";
+import NewTaskVoice from "./new-task-voice";
 
 function getTasks(tasks: TaskProps[], day: Date) {
   return tasks.filter(task => (task.date as Timestamp).toDate().getDate() === day.getDate())
@@ -71,6 +72,8 @@ export function CalendarView() {
 
         <div className="flex gap-5">
           <NewTask className="" />
+
+          <NewTaskVoice />
 
           <Button
             // className="shrink-0"

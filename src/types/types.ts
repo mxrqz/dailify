@@ -7,8 +7,9 @@ export interface TaskProps {
     completed: Date[] | Timestamp[];
     duration: string,
     priority: number,
-    repeat: string | { Weekly: string[] | undefined },
+    repeat: "Off" | "Daily" | "Monthly" | "Yearly" | { Weekly: string[] | undefined },
     date: Date | Timestamp,
+    alert?: Date | Timestamp,
     tags?: string[],
 }
 
@@ -48,7 +49,7 @@ export interface TagsPickerProps {
 }
 
 export interface RepeatPickerProps {
-    onSelectedRepeat: (selectedRepeat: string | { Weekly: string[] | undefined }) => void;
+    onSelectedRepeat: (selectedRepeat: "Off" | "Daily" | "Monthly" | "Yearly" | { Weekly: string[] | undefined }) => void;
     task?: TaskProps
 }
 

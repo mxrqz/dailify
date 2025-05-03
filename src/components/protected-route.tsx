@@ -6,14 +6,25 @@ import { useDailify } from "./dailifyContext";
 import { auth, getTasksForMonth } from "@/functions/firebase";
 import { isSameMonth } from "date-fns";
 import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isSignedIn, isLoaded, user } = useUser()
-    const { selectedDay, setTasks, setIsLoading, isLoading, newTask, setCurrentMonth, currentMonth } = useDailify()
+    const { selectedDay, setTasks, setIsLoading, isLoading, newTask, setCurrentMonth, currentMonth, setCurrentMonthTasks } = useDailify()
     const location = useLocation();
     const { getToken, userId } = useAuth()
     const [isFirebaseLogged, setIsFirebaseLogged] = useState<boolean>(false)
+
+    // useEffect(() => {
+    //     if (userId) {
+    //         const unsub = onSnapshot(collection(db, "users", userId, "tasks"), async () => {
+    //             await getTasks()
+    //         }
+    //         )
+
+    //         return () => unsub()
+    //     }
+    // }, [userId])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -51,9 +62,15 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     }, [user]);
 
     const getTasks = async () => {
+        if (!userId) return
         setIsLoading(true)
         if (!user || !isFirebaseLogged) return
-        const tasks = await getTasksForMonth(user.id, selectedDay)
+        const tasks = await getTasksForMonth(userId, selectedDay)
+
+        if (isSameMonth(new Date(), selectedDay)) {
+            setCurrentMonthTasks(tasks)
+        }
+        
         setTasks(tasks)
         setIsLoading(false)
     }

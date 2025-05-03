@@ -25,13 +25,13 @@ export function getTime(time: Timestamp | Date, format: "{hours, minutes}" | "HH
     return "";
 };
 
-export const getTasksByDate = (tasks: any, year: number, month: number, day: number) => {
-    const yearStr = year.toString()
-    const monthStr = month.toString().padStart(2, "0")
-    const dayStr = day.toString().padStart(2, "0")
+// export const getTasksByDate = (tasks: any, year: number, month: number, day: number) => {
+//     const yearStr = year.toString()
+//     const monthStr = month.toString().padStart(2, "0")
+//     const dayStr = day.toString().padStart(2, "0")
 
-    return tasks?.[yearStr]?.[monthStr]?.[dayStr] || {}
-};
+//     return tasks?.[yearStr]?.[monthStr]?.[dayStr] || {}
+// };
 
 export const formatDateByLocale = (date: Date, locale: string) => {
     const dateLocale = locale.startsWith("pt") ? ptBR : enUS;
@@ -44,4 +44,13 @@ export function getCompletionDate(task: TaskProps, selectedDay: Date) {
     const haveBeenCompletedToday = taskCompletedDate.some(taskDate => format(taskDate, 'P') === format(selectedDay, "P")) ? true : false
 
     return haveBeenCompletedToday
+}
+
+export function getNextTask(currentMonthTasks: TaskProps[]) {
+    const now = new Date();
+    const tasks = currentMonthTasks
+    const orderedTasks = tasks.sort((a, b) => (a.date as Timestamp).toDate().getTime() - (b.date as Timestamp).toDate().getTime())
+    const nextTask = orderedTasks.find(task => (task.date as Timestamp).toDate().getTime() > now.getTime())
+
+    return nextTask
 }

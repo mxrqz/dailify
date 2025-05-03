@@ -1,4 +1,4 @@
-import { RepeatPickerProps } from "@/types/types";
+import { RepeatPickerProps, TaskProps } from "@/types/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { useEffect, useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
@@ -14,6 +14,8 @@ export default function RepeatPicker({ onSelectedRepeat, task }: RepeatPickerPro
         return [];
     })
 
+    const isValidRepeat = (value: any): value is TaskProps["repeat"] => ["Off", "Daily", "Monthly", "Yearly"].includes(value);
+
     useEffect(() => {
         if (!repeat) return
 
@@ -24,7 +26,9 @@ export default function RepeatPicker({ onSelectedRepeat, task }: RepeatPickerPro
             onSelectedRepeat(repeatDays)
             return
         }
-        onSelectedRepeat(repeat)
+
+        const newRepeat = isValidRepeat(repeat) ? repeat : { Weekly: [] }
+        onSelectedRepeat(newRepeat)
     }, [repeat, selectedDays])
 
     return (

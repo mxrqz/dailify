@@ -14,6 +14,8 @@ interface DailifyContextType {
     setIsLoading: (isLoading: boolean) => void;
     currentMonth?: Date;
     setCurrentMonth: (currentMonth: Date) => void;
+    currentMonthTasks: TaskProps[] | undefined;
+    setCurrentMonthTasks: (task: TaskProps[]) => void;
 }
 
 // Criando o contexto com um valor inicial `undefined`
@@ -27,6 +29,7 @@ export function DailifyProvider({ children }: { children: ReactNode }) {
     const [tasks, setTasks] = useState<TaskProps[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [currentMonth, setCurrentMonth] = useState<Date>()
+    const [currentMonthTasks, setCurrentMonthTasks] = useState<TaskProps[]>()
 
     return (
         <DailifyContext.Provider
@@ -36,7 +39,8 @@ export function DailifyProvider({ children }: { children: ReactNode }) {
                 isCalendar, setIsCalendar,
                 tasks, setTasks,
                 isLoading, setIsLoading,
-                currentMonth, setCurrentMonth
+                currentMonth, setCurrentMonth,
+                currentMonthTasks, setCurrentMonthTasks
             }}
         >
             {children}

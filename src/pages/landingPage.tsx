@@ -425,7 +425,7 @@ export default function LandingPage() {
                                 <img
                                     src="/dailify_logo_2.png"
                                     alt="Dailify Logo"
-                                    className="absolute w-full h-full object-cover"
+                                    className="absolute w-full h-full object-cover invert dark:invert-0"
                                 />
                             </div>
 
@@ -488,6 +488,7 @@ export default function LandingPage() {
                             </li>
                         </ul>
                     </div>
+                    
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Resources</h3>
                         <ul className="space-y-2">
@@ -513,6 +514,7 @@ export default function LandingPage() {
                             </li>
                         </ul>
                     </div>
+
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Company</h3>
                         <ul className="space-y-2">

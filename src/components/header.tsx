@@ -37,7 +37,7 @@ export default function Header({ className }: { className?: string }) {
                             </a>
                         ) : (
                             <a href="/premium">
-                                <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground">
+                                <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground/70">
                                     Get Premium
                                 </Button>
                             </a>
@@ -71,7 +71,7 @@ export default function Header({ className }: { className?: string }) {
                     </div>
                 ) : (
                     <div className="flex gap-5">
-                        <Button className="bg-foreground text-background hover:bg-primary/70 cursor-pointer" onClick={() => navigate("/login")}>
+                        <Button className="bg-foreground hover:text-white text-background hover:bg-primary/70 cursor-pointer" onClick={() => navigate("/login")}>
                             Login
                         </Button>
                     </div>
