@@ -25,3 +25,6 @@ export const childVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.1 } }
 }
+
+export const serverURL = "https://2dc1-2804-317c-731e-3a00-7d8e-96bc-489f-600.ngrok-free.app/"
+export const localURL = "http://localhost:3333"

@@ -2,7 +2,7 @@ import { RepeatPickerProps, TaskProps } from "@/types/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { useEffect, useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
-import { weekDays } from "@/conts/conts";
+import { weekDays } from "@/consts/conts";
 
 export default function RepeatPicker({ onSelectedRepeat, task }: RepeatPickerProps) {
     const [repeat, setRepeat] = useState<string>(task ? (typeof task.repeat === "string" ? task.repeat : "Weekly") : "Off")

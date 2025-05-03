@@ -1,4 +1,4 @@
-import { weekDays } from "@/conts/conts"
+import { weekDays } from "@/consts/conts"
 import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isToday, startOfMonth, startOfWeek, subMonths } from "date-fns"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { useState, useEffect } from "react"

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import NewTask from "./new-task";
-import { paletteColors, priorityBgColor, priorityBorderColor, priorityText, priorityTextColor, tagsBgColors2, weekDays } from "@/conts/conts";
+import { paletteColors, priorityBgColor, priorityBorderColor, priorityText, priorityTextColor, tagsBgColors2, weekDays } from "@/consts/conts";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { Calendar1Icon, ChevronLeft, ChevronRight, ClockIcon, Loader2Icon } from "lucide-react";

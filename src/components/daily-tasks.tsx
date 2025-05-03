@@ -5,7 +5,7 @@ import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
 
 import { motion } from 'framer-motion';
-import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/conts/conts";
+import { priorityTextColor, priorityBgColor, priorityBorderColor, priorityText, tagsBgColors2, variants, childVariants } from "@/consts/conts";
 import { Timestamp } from "firebase/firestore";
 import { getCompletionDate, getTime } from "@/functions/functions";
 import { format } from "date-fns";

@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { collection, deleteDoc, doc, getDocs, getFirestore, query, Timestamp, where } from "firebase/firestore";
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameMonth, isSameYear } from "date-fns";
 import { getAuth } from "firebase/auth";
+import { serverURL } from "@/consts/conts";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjb63TKK_8X-FLpTMNrogEyTn_LZbyLX0",
@@ -20,7 +21,7 @@ const auth = getAuth(app)
 export { auth, db }
 
 export async function saveTask(taskData: TaskProps, token: string): Promise<{ error?: string }> {
-    const response = await fetch('http://localhost:3333/createTask', {
+    const response = await fetch(`${serverURL}createTask`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -77,7 +78,7 @@ export async function saveEditedTask(taskData: TaskProps, token: string): Promis
     // const docToUpdate = doc(db, "users", userId, "tasks", taskData.id);
     // updateDoc(docToUpdate, { ...taskData })
 
-    const response = await fetch('http://localhost:3333/editTask', {
+    const response = await fetch(`${serverURL}editTask`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export async function markTaskAsCompleted(token: string, taskId: string) {
     //     completed: arrayUnion(now)
     // });
 
-    const response = await fetch('http://localhost:3333/editCompletedTask', {
+    const response = await fetch(`${serverURL}editCompletedTask`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-import { priorityBgColor, prioritySelectedBgColor } from "@/conts/conts";
+import { priorityBgColor, prioritySelectedBgColor } from "@/consts/conts";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 import { PriorityPickerProps } from "@/types/types";
 import { useEffect, useState } from "react";

@@ -15,7 +15,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { EditTask, EditTaskContent, EditTaskTrigger } from "./edit-task"
 import { TaskProps } from "@/types/types"
-import { priorityBgColor, priorityText, priorityTextColor } from "@/conts/conts"
+import { priorityBgColor, priorityText, priorityTextColor } from "@/consts/conts"
 import { deleteTask } from "@/functions/firebase"
 import { useAuth } from "@clerk/clerk-react"
 
