@@ -50,7 +50,7 @@ export default function SelectDay() {
                     {nextTask && (
                         <div className="w-full border border-primary rounded-md p-2 flex flex-col">
                             <span className="text-lg font-bold">{nextTask?.title}</span>
-                            <span className="text-muted-foreground">{format((nextTask?.date as Timestamp).toDate(), "PPP")}</span>
+                            <span className="text-muted-foreground">{format((nextTask?.date as Timestamp).toDate(), "PPPP, p")}</span>
                         </div>
                     )}
                 </div>

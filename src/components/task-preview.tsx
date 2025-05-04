@@ -95,6 +95,7 @@ export function TaskDetailView({ task, className }: TaskDetailViewProps) {
                             <span>{formattedTime}</span>
                         </div>
                     </div>
+
                     <Badge className={priorityInfo.color}>
                         <div className="flex items-center gap-1">
                             {priorityInfo.icon}
@@ -138,6 +139,7 @@ export function TaskDetailView({ task, className }: TaskDetailViewProps) {
                         <div className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground">
                             <Bell className="size-4" />
                         </div>
+
                         <div>
                             <p className="text-xs text-muted-foreground">Alerta</p>
                             <p className="font-medium">{alertTime}</p>
@@ -155,76 +157,6 @@ export function TaskDetailView({ task, className }: TaskDetailViewProps) {
                         </div>
                     </div>
                 </div>
-
-                {/* <Collapsible open={isExpanded} onOpenChange={setIsExpanded} className="mt-4">
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm" className="flex w-full justify-center gap-1 p-0 h-8">
-                            {isExpanded ? (
-                                <>
-                                    <span className="text-xs text-muted-foreground">Mostrar menos</span>
-                                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                                </>
-                            ) : (
-                                <>
-                                    <span className="text-xs text-muted-foreground">Mostrar mais</span>
-                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                                </>
-                            )}
-                        </Button>
-                    </CollapsibleTrigger>
-
-                    <CollapsibleContent className="mt-4 space-y-4">
-                        {task.description ? (
-                            <div className="space-y-2">
-                                <h4 className="text-sm font-medium">Descrição</h4>
-                                <p className="text-sm text-muted-foreground">{task.description}</p>
-                            </div>
-                        ) : (
-                            <div className="rounded-md bg-muted/50 p-3 text-center text-sm text-muted-foreground">
-                                Nenhuma descrição fornecida
-                            </div>
-                        )}
-
-                        <div className="space-y-2">
-                            <h4 className="text-sm font-medium flex items-center gap-2">
-                                <Tag className="h-4 w-4" />
-                                Tags
-                            </h4>
-
-                            {task.tags && task.tags.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {task.tags.map((tag, index) => (
-                                        <Badge key={index} variant="secondary">
-                                            {tag}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="rounded-md bg-muted/50 p-3 text-center text-sm text-muted-foreground">
-                                    Nenhuma tag adicionada
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <h4 className="text-sm font-medium">Detalhes</h4>
-                            <div className="rounded-md bg-muted/50 p-3 space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">ID da tarefa:</span>
-                                    <span className="font-mono">{task.id}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Data completa:</span>
-                                    <span>{formattedFullDate}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Alerta:</span>
-                                    <span>{format(alertDate, "PPp", { locale: ptBR })}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </CollapsibleContent>
-                </Collapsible> */}
             </CardContent>
 
             <CardFooter className="flex justify-between p-4 pt-0 w-full">
