@@ -18,6 +18,7 @@ import { TimeValue } from "react-aria-components";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { isTaskModified } from "@/functions/functions";
 
 interface EditTaskProps {
 }
@@ -67,48 +68,118 @@ export function EditTaskContent({ task }: { task: TaskProps }) {
         setSelectedDuration(finalMessage)
     }
 
+    // const editTask = async () => {
+    //     if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+
+    //     const title = titleRef.current.value
+    //     const desc = descriptionRef.current.value
+    //     const id = task.id
+
+    //     if (!title) {
+    //         toast.warning('Title is required');
+    //         return;
+    //     } else if (!desc) {
+    //         toast.warning('Description is required');
+    //         return;
+    //     } else if (!selectedDate || !selectedDuration || priority === null || !repeat) {
+    //         toast.warning('All fields are required')
+    //         return;
+    //     }
+
+    //     setLoading(true)
+
+    //     const token = await getToken()
+    //     if (!token) return
+
+    //     const taskData = {
+    //         date: selectedDate,
+    //         id,
+    //         description: desc,
+    //         title,
+    //         completed: [],
+    //         duration: selectedDuration,
+    //         tags: tags,
+    //         priority,
+    //         repeat
+    //     }
+
+    //     const { error } = await saveEditedTask(taskData, token)
+    //     if (error) {
+    //         toast('An error occurred', {
+    //             description: error,
+    //             action: {
+    //                 label: 'Get Premium',
+    //                 onClick: () => navigate('/prices')
+    //             },
+    //         })
+    //     } else {
+    //         setNewTask(taskData)
+    //     }
+
+    //     setLoading(false)
+    // }
+
     const editTask = async () => {
-        setLoading(true)
+        if (!user || !titleRef.current || !descriptionRef.current) {
+            toast.warning('User not authenticated or invalid references.');
+            return;
+        }
 
-        if (!user || !titleRef.current || !descriptionRef.current || !selectedDate || !selectedDuration || priority === null || !repeat) return
+        const title = titleRef.current.value.trim();
+        const desc = descriptionRef.current.value.trim();
 
-        const token = await getToken()
-        if (!token) return
+        if (!title) return toast.warning('Title is required.');
+        if (!desc) return toast.warning('Description is required.');
+        if (!selectedDate) return toast.warning('Date is required.');
+        if (!selectedDuration) return toast.warning('Duration is required.');
+        if (priority === null) return toast.warning('Priority is required.');
+        if (!repeat) return toast.warning('Repeat option is required.');
 
-        // const userId = user.id
-        const title = titleRef.current.value
-        const desc = descriptionRef.current.value
-        const id = task.id
+        setLoading(true);
 
-        if (!title || !desc) return
+        const token = await getToken();
+        if (!token) {
+            toast.error('Authentication token is missing.');
+            setLoading(false);
+            return;
+        }
 
         const taskData = {
             date: selectedDate,
-            id,
-            description: desc,
+            id: task.id,
             title,
+            description: desc,
             completed: [],
             duration: selectedDuration,
-            tags: tags,
+            tags,
             priority,
-            repeat
+            repeat,
+            alert: task.alert ? task.alert : selectedDate
+        };
+
+        if (!isTaskModified(task, taskData)) {
+            toast.info("No changes made to the task.");
+            setLoading(false)
+            return;
         }
 
-        const { error } = await saveEditedTask(taskData, token)
+        const { error } = await saveEditedTask(taskData, token);
+
         if (error) {
             toast('An error occurred', {
                 description: error,
                 action: {
                     label: 'Get Premium',
-                    onClick: () => navigate('/prices')
+                    onClick: () => navigate('/prices'),
                 },
-            })
+            });
         } else {
-            setNewTask(taskData)
+            toast.success('Task updated successfully!');
+            setNewTask(taskData);
         }
 
-        setLoading(false)
-    }
+        setLoading(false);
+    };
 
     const handleDurationValue = () => {
         if (!task.duration) return

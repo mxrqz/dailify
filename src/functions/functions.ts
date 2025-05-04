@@ -54,3 +54,26 @@ export function getNextTask(currentMonthTasks: TaskProps[]) {
 
     return nextTask
 }
+
+export function isTaskModified(task: TaskProps, updated: TaskProps): boolean {
+    const original = {
+        ...task,
+        alert: task.alert ? task.alert : task.date
+    }
+
+    const normalizeDate = (d: any) => d instanceof Date ? d.getTime() : d.toDate().getTime();
+    
+    if (original.title !== updated.title) return true;
+    if (original.description !== updated.description) return true;
+    if (original.duration !== updated.duration) return true;
+    if (original.priority !== updated.priority) return true;
+    if (JSON.stringify(original.tags) !== JSON.stringify(updated.tags)) return true;
+    
+    if (normalizeDate(original.date) !== normalizeDate(updated.date)) return true;
+    if (normalizeDate(original.alert) !== normalizeDate(updated.alert)) return true;
+
+    const isRepeatChanged = JSON.stringify(original.repeat) !== JSON.stringify(updated.repeat);
+    if (isRepeatChanged) return true;
+
+    return false;
+}
