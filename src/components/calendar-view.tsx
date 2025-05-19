@@ -20,20 +20,20 @@ function getTasks(tasks: TaskProps[], day: Date) {
 }
 
 export function CalendarView() {
-  const { selectedDay, setSelectedDay, isCalendar, setIsCalendar, tasks, isLoading, setIsLoading } = useDailify()
+  const { selectedDay, setSelectedDay, isCalendar, setIsCalendar, tasks, isLoading } = useDailify()
 
   const goToPreviousMonth = () => {
-    setIsLoading(true)
+    // setIsLoading("Carregando Data")
     setSelectedDay(subMonths(selectedDay, 1))
   }
 
   const goToNextMonth = () => {
-    setIsLoading(true)
+    // setIsLoading("Carregando Data")
     setSelectedDay(addMonths(selectedDay, 1))
   }
 
   const goToToday = () => {
-    setIsLoading(true)
+    // setIsLoading("Carregando Data")
     setSelectedDay(new Date())
   }
 

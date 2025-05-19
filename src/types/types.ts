@@ -63,3 +63,42 @@ export interface FormDataValues {
     lastName: string;
     username: string;
 };
+
+export type PermissionsProps = {
+    taskLimits: {
+        daily: number;
+        monthly: number;
+        recurring: number;
+    };
+    features: {
+        voiceCreation: boolean;
+    };
+    whatsapp: {
+        weeklyLimit: number;
+        canRead: boolean;
+        canCreate: boolean;
+        canUpdate: boolean;
+        canDelete: boolean;
+        voiceCreation: boolean;
+    };
+};
+
+export type InvoicesProps = {
+    amount_paid: number,
+    currency: string,
+    status: "draft" | "open" | "paid" | "uncollectible" | "void" | null,
+    created: number,
+    hosted_invoice_url: string | null | undefined,
+    recurring: "year" | "month",
+    brandName: string,
+    cardLast4: number,
+    walletType: string,
+    paymentMethodType: string,
+}
+
+export type PaymentDetailsProps = {
+    amount: number,
+    currency: string,
+    start: number,
+    recurring: string
+}

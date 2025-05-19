@@ -12,9 +12,12 @@ import { ClerkAPIError, OAuthStrategy } from '@clerk/types';
 import VerifyingLink from "../components/verifying-link";
 import { isClerkAPIResponseError } from '@clerk/clerk-react/errors';
 import { useLocation } from "react-router-dom";
+import { dailifyURL } from "@/consts/conts";
+import { auth } from "@/functions/firebase";
+import { signOut } from 'firebase/auth'
 
 export default function Login() {
-    const { signOut } = useAuth()
+    const { signOut: clerkSignOut } = useAuth()
     const { signIn, isLoaded } = useSignIn()
     const { signUp } = useSignUp()
     const { isSignedIn } = useUser()
@@ -54,7 +57,7 @@ export default function Login() {
         setEmail(emailAddress);
         const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
 
-        const url = "https://dailify.mxrqz.com";
+        const url = dailifyURL;
         const redirectUrl = `${url}/sign-in/verify`;
 
         try {
@@ -122,6 +125,10 @@ export default function Login() {
         )
     }
 
+    const handleLogout = async () => {
+        await clerkSignOut()
+        await signOut(auth)
+    }
     return (
         <div className="w-full h-dvh flex flex-col justify-center items-center py-5 px-[clamp(1rem,5vw,6rem)]">
             {verifying && email ? (
@@ -168,7 +175,7 @@ export default function Login() {
                         </form>
 
                         {isSignedIn && (
-                            <Button variant={"destructive"} onClick={() => signOut()}>
+                            <Button variant={"destructive"} onClick={handleLogout}>
                                 Logout
                             </Button>
                         )}

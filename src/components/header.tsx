@@ -3,14 +3,21 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ModeToggle } from "./mode-toggle";
 import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
+import { signOut } from 'firebase/auth'
+import { auth } from "@/functions/firebase";
 
 export default function Header({ className }: { className?: string }) {
+    const { signOut: clerkSignOut } = useAuth()
     const { user } = useUser()
-    const { signOut } = useAuth()
     const navigate = useNavigate()
     const path = window.location.pathname
+
+    const handleLogout = async () => {
+        await clerkSignOut()
+        await signOut(auth)
+    }
 
     return (
         <header className={`${className} sticky top-0 py-5 inline-flex justify-between items-center w-full dark:bg-zinc-900/70 bg-zinc-100/70 backdrop-blur z-10 rounded-b-md`}>
@@ -36,11 +43,13 @@ export default function Header({ className }: { className?: string }) {
                                 </Button>
                             </a>
                         ) : (
-                            <a href="/premium">
-                                <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground/70">
-                                    Get Premium
-                                </Button>
-                            </a>
+                            user.publicMetadata?.plan === 'free' && (
+                                <Link to="/premium">
+                                    <Button className="bg-foreground text-background cursor-pointer hover:bg-foreground/70">
+                                        Get Premium
+                                    </Button>
+                                </Link>
+                            )
                         )}
 
                         <DropdownMenu>
@@ -62,7 +71,7 @@ export default function Header({ className }: { className?: string }) {
                                     <span>Settings</span>
                                 </DropdownMenuItem>
 
-                                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+                                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                                     <LogOutIcon />
                                     <span>LogOut</span>
                                 </DropdownMenuItem>

@@ -6,15 +6,15 @@ import { useDailify } from "../dailifyContext"
 import { Button } from "./button"
 
 export default function Calendar2() {
-    const { setSelectedDay, selectedDay, setIsLoading } = useDailify()
+    const { setSelectedDay, selectedDay } = useDailify()
     
     const goToPreviousMonth = () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setSelectedDay(subMonths(selectedDay, 1))
     }
 
     const goToNextMonth = () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setSelectedDay(addMonths(selectedDay, 1))
     }
 

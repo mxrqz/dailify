@@ -7,20 +7,20 @@ import { Button } from "./button"
 import { cn } from "@/lib/utils"
 
 export default function Calendar3({ className }: { className?: string }) {
-    const { setSelectedDay, selectedDay, setIsLoading } = useDailify()
+    const { setSelectedDay, selectedDay } = useDailify()
 
     const goToPreviousMonth = () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setSelectedDay(subMonths(selectedDay, 1))
     }
 
     const goToNextMonth = () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setSelectedDay(addMonths(selectedDay, 1))
     }
 
     const goToToday = () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         setSelectedDay(new Date())
     }
 

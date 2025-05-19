@@ -26,5 +26,11 @@ export const childVariants = {
     visible: { opacity: 1, transition: { duration: 0.1 } }
 }
 
-export const serverURL = "https://a162-2804-317c-731e-3a00-3917-2fec-64e-12bf.ngrok-free.app/"
-export const localURL = "http://localhost:3333"
+export const planMap: Record<string, "Free" | "Pro" | "Pro + AI"> = {
+    ["free"]: "Free",
+    ["pro"]: "Pro",
+    ["pro+ai"!]: "Pro + AI",
+};
+
+export const serverURL = "https://dailify-server.onrender.com/"
+export const dailifyURL = "https://dailify.mxrqz.com/"

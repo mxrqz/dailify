@@ -11,6 +11,8 @@ import ProfilePage from "./pages/profile";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import TaskPreview from "./pages/[id]/taskPreview";
 import LandingPage from "./pages/landingPage";
+import PremiumPage from "./pages/premium";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App() {
 
@@ -21,7 +23,7 @@ export default function App() {
           <ThemeProvider>
             <Routes>
               <Route path="/"
-                element={ <LandingPage />}
+                element={<LandingPage />}
               />
 
               <Route path="/dashboard"
@@ -64,7 +66,10 @@ export default function App() {
 
               <Route path="/task/:id" element={<TaskPreview />} />
 
+              <Route path="/premium" element={<PremiumPage />} />
             </Routes>
+
+            <Toaster />
           </ThemeProvider>
         </Router>
       </DailifyProvider>

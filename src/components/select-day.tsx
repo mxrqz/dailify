@@ -14,7 +14,6 @@ export default function SelectDay() {
     const { setIsCalendar, isCalendar, currentMonthTasks } = useDailify()
     const [nextTask, setNextTask] = useState<TaskProps>()
 
-
     useEffect(() => {
         if (currentMonthTasks) {
             const task = getNextTask(currentMonthTasks)
@@ -23,13 +22,13 @@ export default function SelectDay() {
     }, [currentMonthTasks])
 
     return (
-        <section className='flex flex-col md:flex-row md:h-80 gap-5 w-full'>
+        <section className='flex flex-col md:flex-row gap-5 w-full'>
             <Calendar2 />
 
             <div className="flex flex-col md:grid md:grid-rows-2 w-full gap-3">
                 <div className="flex w-full gap-3 h-full">
                     <div className="flex gap-3 w-full">
-                        <NewTask className="w-full shrink md:h-full border cursor-pointer" />
+                        <NewTask className="w-full shrink aspect-square md:h-full border cursor-pointer" />
 
                         <NewTaskVoice />
                     </div>

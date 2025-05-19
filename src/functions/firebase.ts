@@ -2,7 +2,7 @@ import { TaskProps } from "@/types/types";
 import { initializeApp } from "firebase/app";
 import { collection, deleteDoc, doc, getDocs, getFirestore, query, Timestamp, where } from "firebase/firestore";
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameMonth, isSameYear } from "date-fns";
-import { getAuth } from "firebase/auth";
+import { getAuth} from "firebase/auth";
 import { serverURL } from "@/consts/conts";
 
 const firebaseConfig = {
@@ -174,7 +174,7 @@ async function getMonthTasks(userId: string, month: Date) {
     })
 
     return tasks
-}  
+}
 
 async function getMonthlyRepeatTasks(userId: string, month: Date) {
     const repeatTasksDocRef = collection(db, "users", userId, "repeatTasks");

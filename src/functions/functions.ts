@@ -77,3 +77,7 @@ export function isTaskModified(task: TaskProps, updated: TaskProps): boolean {
 
     return false;
 }
+
+export function unixToDate(unix: number): Date {
+  return new Date(unix * 1000);
+}
