@@ -22,7 +22,7 @@ export default function SelectDay() {
     }, [currentMonthTasks])
 
     return (
-        <section className='flex flex-col md:flex-row gap-5 w-full'>
+        <section className='flex flex-col md:flex-row md:h-88 gap-5 w-full'>
             <Calendar2 />
 
             <div className="flex flex-col md:grid md:grid-rows-2 w-full gap-3">
