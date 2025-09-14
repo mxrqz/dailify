@@ -32,5 +32,5 @@ export const planMap: Record<string, "Free" | "Pro" | "Pro + AI"> = {
     ["pro+ai"!]: "Pro + AI",
 };
 
-export const serverURL = "https://dailify-server.onrender.com/"
+export const serverURL = "http://localhost:3333/"
 export const dailifyURL = "https://dailify.mxrqz.com/"

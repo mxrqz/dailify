@@ -48,8 +48,23 @@ export function getCompletionDate(task: TaskProps, selectedDay: Date) {
 
 export function getNextTask(currentMonthTasks: TaskProps[]) {
     const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
     const tasks = currentMonthTasks
-    const orderedTasks = tasks.sort((a, b) => (a.date as Timestamp).toDate().getTime() - (b.date as Timestamp).toDate().getTime())
+
+    const updatedTasks = tasks.map(task => {
+        const originalDate = (task.date as Timestamp).toDate();
+        const updatedDate = new Date(originalDate);
+        updatedDate.setMonth(currentMonth);
+        updatedDate.setFullYear(currentYear);
+
+        const date = Timestamp.fromDate(updatedDate)
+
+        return { ...task, date };
+    });
+
+    const orderedTasks = updatedTasks.sort((a, b) => (a.date as Timestamp).toDate().getTime() - (b.date as Timestamp).toDate().getTime())
     const nextTask = orderedTasks.find(task => (task.date as Timestamp).toDate().getTime() > now.getTime())
 
     return nextTask
@@ -62,13 +77,13 @@ export function isTaskModified(task: TaskProps, updated: TaskProps): boolean {
     }
 
     const normalizeDate = (d: any) => d instanceof Date ? d.getTime() : d.toDate().getTime();
-    
+
     if (original.title !== updated.title) return true;
     if (original.description !== updated.description) return true;
     if (original.duration !== updated.duration) return true;
     if (original.priority !== updated.priority) return true;
     if (JSON.stringify(original.tags) !== JSON.stringify(updated.tags)) return true;
-    
+
     if (normalizeDate(original.date) !== normalizeDate(updated.date)) return true;
     if (normalizeDate(original.alert) !== normalizeDate(updated.alert)) return true;
 
@@ -79,5 +94,5 @@ export function isTaskModified(task: TaskProps, updated: TaskProps): boolean {
 }
 
 export function unixToDate(unix: number): Date {
-  return new Date(unix * 1000);
+    return new Date(unix * 1000);
 }

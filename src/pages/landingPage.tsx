@@ -83,8 +83,8 @@ export default function LandingPage() {
                         <span className="text- font-bold">Upcoming Task</span>
 
                         <div className="w-full border border-primary rounded-md p-2 flex flex-col">
-                            <span className="text-lg font-bold">Dailify</span>
-                            <span className="text-sm text-muted-foreground">12:00 PM</span>
+                            <span className="text-lg font-bold">Morning Workout</span>
+                            <span className="text-sm text-muted-foreground">30-minute strength routine</span>
                         </div>
                     </div>
 
@@ -100,14 +100,14 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-2 bg-background/50 rounded-md border p-3 shadow">
                             <div className="flex flex-col w-full">
                                 <div className="flex w-full justify-between items-center">
-                                    <span className="text-base font-semibold">task.title</span>
+                                    <span className="text-base font-semibold">Team Sync</span>
 
                                     <div className="flex items-center gap-2">
                                         <Badge variant={"outline"} className="">1h</Badge>
                                     </div>
                                 </div>
 
-                                <p className="text-sm font-medium text-muted-foreground">task.description</p>
+                                <p className="text-sm font-medium text-muted-foreground">15-minute stand-up meeting.</p>
                             </div>
                         </div>
 
@@ -120,14 +120,14 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-2 bg-background/50 rounded-md border p-3 shadow">
                             <div className="flex flex-col w-full">
                                 <div className="flex w-full justify-between items-center">
-                                    <span className="text-base font-semibold">task.title 2</span>
+                                    <span className="text-base font-semibold">Code Review</span>
 
                                     <div className="flex items-center gap-2">
                                         <Badge variant={"outline"} className="">1h</Badge>
                                     </div>
                                 </div>
 
-                                <p className="text-sm font-medium text-muted-foreground">task.description</p>
+                                <p className="text-sm font-medium text-muted-foreground">Review and merge PRs</p>
                             </div>
                         </div>
                     </div>
@@ -322,7 +322,7 @@ export default function LandingPage() {
                                 name: "Free",
                                 price: "$0",
                                 description: "Perfect for getting started",
-                                features: ["Up to 10 daily tasks", "Basic calendar view", "Task prioritization", "Mobile access"],
+                                features: ["Up to 5 daily tasks", "2 recurring tasks"],
                                 buttonText: "Get Started",
                                 popular: false,
                             },
@@ -332,18 +332,16 @@ export default function LandingPage() {
                                 period: "per month",
                                 description: "For busy individuals",
                                 features: [
+                                    "Everything in Free",
                                     "Unlimited tasks",
-                                    "Advanced calendar views",
-                                    "Recurring tasks",
-                                    "Custom categories",
-                                    "Priority support",
+                                    "Unlimited  recurring tasks",
                                 ],
                                 buttonText: "Upgrade to Pro",
                                 popular: true,
                             },
                             {
-                                name: "Team",
-                                price: "$12",
+                                name: "Pro + Ia",
+                                price: "$10",
                                 period: "per user/month",
                                 description: "For teams and organizations",
                                 features: [
@@ -488,7 +486,7 @@ export default function LandingPage() {
                             </li>
                         </ul>
                     </div>
-                    
+
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Resources</h3>
                         <ul className="space-y-2">

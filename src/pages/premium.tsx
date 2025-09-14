@@ -317,7 +317,7 @@ export default function PremiumPage() {
                                 Começar com Pro
                             </Button>
 
-                            <Button size="lg" variant="outline" onClick={() => handleSelectPlan("pro-ai")}>
+                            <Button size="lg" variant="outline" onClick={() => handleSelectPlan("pro+ai")}>
                                 Experimentar Pro + IA
                             </Button>
                         </div>
